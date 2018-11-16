@@ -144,7 +144,7 @@ public class LsCodeGeneratorUtil {
         globalConfig.setOutputDir(projectPath + "/src/main/java/");
         globalConfig.setAuthor("孙龙云");
         globalConfig.setOpen(false);
-        globalConfig.setFileOverride(true);
+        globalConfig.setFileOverride(false);
         globalConfig.setActiveRecord(true);
         globalConfig.setBaseResultMap(true);
         globalConfig.setBaseColumnList(true);

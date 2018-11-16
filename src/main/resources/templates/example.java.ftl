@@ -88,6 +88,7 @@ public class ${entity}Example implements Serializable {
         * @return
         */
         <#list table.fields as field>
+        // in,   not in
         public Criteria and${field.capitalName}In(List<${field.propertyType}> values) {
             addCriterion("${field.name} in", values, "${field.propertyName}");
             return (Criteria) this;
@@ -96,30 +97,49 @@ public class ${entity}Example implements Serializable {
             addCriterion("${field.name} not in", values, "${field.propertyName}");
             return (Criteria) this;
         }
+
+        //between
         public Criteria and${field.capitalName}Between(${field.propertyType} value1, ${field.propertyType} value2) {
             addCriterion("${field.name} between", value1, value2, "${field.propertyName}");
             return (Criteria) this;
         }
 
+        //like
         public Criteria and${field.capitalName}Like(String value) {
             addCriterion("${field.name} like", value, "${field.propertyName}");
             return (Criteria) this;
         }
 
+        // = <>
         public Criteria and${field.capitalName}EqualTo(${field.propertyType} value) {
             addCriterion("${field.name} =", value, "${field.propertyName}");
             return (Criteria) this;
         }
-
         public Criteria and${field.capitalName}NotEqualTo(${field.propertyType} value) {
             addCriterion("${field.name} <>", value, "${field.propertyName}");
             return (Criteria) this;
         }
 
-        public Criteria and${field.capitalName}LessThanOrEqualTo(${field.propertyType} value) {
-            addCriterion("${field.name} <=", value, "rgb");
+
+        // > >= < <=
+        public Criteria and${field.capitalName}GreaterThan(${field.propertyType} value) {
+            addCriterion("${field.name} >", value, "${field.propertyName}");
             return (Criteria) this;
         }
+        public Criteria and${field.capitalName}GreaterThanOrEqualTo(${field.propertyType} value) {
+            addCriterion("${field.name} >=", value, "${field.propertyName}");
+            return (Criteria) this;
+        }
+        public Criteria and${field.capitalName}LessThan(${field.propertyType} value) {
+            addCriterion("${field.name} <", value, "${field.propertyName}");
+            return (Criteria) this;
+        }
+        public Criteria and${field.capitalName}LessThanOrEqualTo(${field.propertyType} value) {
+            addCriterion("${field.name} <=", value, "${field.propertyName}");
+            return (Criteria) this;
+        }
+
+        //null  not null
         public Criteria and${field.capitalName}IsNull() {
             addCriterion("${field.name} is null");
             return (Criteria) this;

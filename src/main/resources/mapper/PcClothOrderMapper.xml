@@ -56,6 +56,8 @@
         id, order_no, third_order_no, status, send_message_times, platform, cloth_store_id, customer_id, customer_name, customer_mobile, customer_address, real_customer_name, real_customer_mobile, customer_type, estimated_delivery_time, require_completion_time, logistics_type_id, remark, create_time, update_time, validity, original_order_no, is_delivery, service_fee, delivery_short_barge_fee, cloth_delivery_short_barge_fee, coupon_num, cloth_source, market_id, buyer_operator_id, seller_operator_id, received_roll_nums, buyer_name, buyer_contact_mobile, pull_in_flag, require_complete_type, pull_in_time, pull_in_contact, pull_in_tel, pull_in_address, can_direct_delivery, create_id, sale_flag
     </sql>
 
+
+
     <!-- example通用查询-->
     <select id="selectByExample" parameterType="com.lianshang.cloth2.example.PcClothOrderExample" resultMap="BaseResultMap">
         select

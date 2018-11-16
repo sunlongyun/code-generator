@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lianshang.cloth2.mapper.PcClothOrderMapper">
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.lianshang.cloth2.entity.PcClothOrder">
+        <id column="id" property="id" />
+        <result column="order_no" property="orderNo" />
+        <result column="third_order_no" property="thirdOrderNo" />
+        <result column="status" property="status" />
+        <result column="send_message_times" property="sendMessageTimes" />
+        <result column="platform" property="platform" />
+        <result column="cloth_store_id" property="clothStoreId" />
+        <result column="customer_id" property="customerId" />
+        <result column="customer_name" property="customerName" />
+        <result column="customer_mobile" property="customerMobile" />
+        <result column="customer_address" property="customerAddress" />
+        <result column="real_customer_name" property="realCustomerName" />
+        <result column="real_customer_mobile" property="realCustomerMobile" />
+        <result column="customer_type" property="customerType" />
+        <result column="estimated_delivery_time" property="estimatedDeliveryTime" />
+        <result column="require_completion_time" property="requireCompletionTime" />
+        <result column="logistics_type_id" property="logisticsTypeId" />
+        <result column="remark" property="remark" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="validity" property="validity" />
+        <result column="original_order_no" property="originalOrderNo" />
+        <result column="is_delivery" property="isDelivery" />
+        <result column="service_fee" property="serviceFee" />
+        <result column="delivery_short_barge_fee" property="deliveryShortBargeFee" />
+        <result column="cloth_delivery_short_barge_fee" property="clothDeliveryShortBargeFee" />
+        <result column="coupon_num" property="couponNum" />
+        <result column="cloth_source" property="clothSource" />
+        <result column="market_id" property="marketId" />
+        <result column="buyer_operator_id" property="buyerOperatorId" />
+        <result column="seller_operator_id" property="sellerOperatorId" />
+        <result column="received_roll_nums" property="receivedRollNums" />
+        <result column="buyer_name" property="buyerName" />
+        <result column="buyer_contact_mobile" property="buyerContactMobile" />
+        <result column="pull_in_flag" property="pullInFlag" />
+        <result column="require_complete_type" property="requireCompleteType" />
+        <result column="pull_in_time" property="pullInTime" />
+        <result column="pull_in_contact" property="pullInContact" />
+        <result column="pull_in_tel" property="pullInTel" />
+        <result column="pull_in_address" property="pullInAddress" />
+        <result column="can_direct_delivery" property="canDirectDelivery" />
+        <result column="create_id" property="createId" />
+        <result column="sale_flag" property="saleFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_no, third_order_no, status, send_message_times, platform, cloth_store_id, customer_id, customer_name, customer_mobile, customer_address, real_customer_name, real_customer_mobile, customer_type, estimated_delivery_time, require_completion_time, logistics_type_id, remark, create_time, update_time, validity, original_order_no, is_delivery, service_fee, delivery_short_barge_fee, cloth_delivery_short_barge_fee, coupon_num, cloth_source, market_id, buyer_operator_id, seller_operator_id, received_roll_nums, buyer_name, buyer_contact_mobile, pull_in_flag, require_complete_type, pull_in_time, pull_in_contact, pull_in_tel, pull_in_address, can_direct_delivery, create_id, sale_flag
+    </sql>
+
+    <!-- example通用查询-->
+    <select id="selectByExample" parameterType="com.lianshang.cloth2.example.PcClothOrderExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'false' as QUERYID,
+        <include refid="Base_Column_List" />
+        from user_color
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <!-- 条件-->
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                    #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+</mapper>

@@ -80,8 +80,8 @@ import java.util.List;
  * @since 2016-01-23
  */
 public interface LsBaseMapper<T> extends BaseMapper<T>{
-    /**
-     ** 通用查询
-     **/
-    public List<T> selectByExample(Serializable example);
+ /**
+  ** 通用查询
+  **/
+  public List<T> selectByExample(Serializable example);
 }

@@ -1,8 +1,6 @@
 package com.lianshang.generator.commons;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -19,31 +17,47 @@ import java.util.Map;
  * @AUTHOR 孙龙云
  * @date 2018-11-14 下午6:10
  */
-public class ServiceImpl<M extends BaseMapper<T>, T, N> implements IService<N> {
+public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<DTO> {
     @Autowired
     protected M baseMapper;
 
     /**
-     * x 对象转为 y 对象
-     *
-     * @param x
+     * entity 对象转dto对象
+     * @param entity
      * @return
      */
-    private <Y> Object X2Y(Object x) {
-        Y y = null;
+    private DTO entityToDto(T entity) {
         try {
-            String xClassName = x.getClass().getName();
+            String xClassName = entity.getClass().getName();
             String yClassName = xClassName.replaceAll("entity\\.","dto\\.")+"Dto";
             Object target = Class.forName(yClassName).newInstance();
-            BeanUtils.copyProperties(x, target);
-            return (Y) target;
+            BeanUtils.copyProperties(entity, target);
+            return (DTO) target;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
     }
 
-
+    /**
+     * dto 对象转entity对象
+     *
+     * @param dto
+     * @return
+     */
+    private T dtoToEntity(Object dto) {
+        try {
+            String xClassName = dto.getClass().getName();
+            String yClassName = xClassName
+              .replaceAll("dto\\.", "entity\\.").replaceAll("Dto$", "");
+            Object target = Class.forName(yClassName).newInstance();
+            BeanUtils.copyProperties(dto, target);
+            return (T) target;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
     /**
      * 添加对象
      *
@@ -51,22 +65,22 @@ public class ServiceImpl<M extends BaseMapper<T>, T, N> implements IService<N> {
      * @return
      */
     @Override
-    public boolean save(N n) {
-        Object target = X2Y(n);
-        int r = baseMapper.insert((T) target);
+    public boolean save(DTO n) {
+        T target = dtoToEntity(n);
+        int r = baseMapper.insert(target);
         return r > 0;
     }
 
     /**
      * 根据id修改对象
      *
-     * @param id
+     * @param n
      * @return
      */
     @Override
-    public boolean updateById(Serializable id) {
-        T t = baseMapper.selectById(id);
-        int r = baseMapper.updateById(t);
+    public boolean update(DTO n) {
+        T target = dtoToEntity(n);
+        int r = baseMapper.updateById(target);
         return r > 0;
     }
 
@@ -89,9 +103,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T, N> implements IService<N> {
      * @return
      */
     @Override
-    public N getById(Serializable id) {
+    public DTO getById(Serializable id) {
         T t = baseMapper.selectById(id);
-        N n = (N) X2Y(t);
+        DTO n = entityToDto(t);
         return n;
     }
 
@@ -102,12 +116,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T, N> implements IService<N> {
      * @return
      */
     @Override
-    public List<N> getListByIds(Collection<? extends Serializable> idList) {
+    public List<DTO> getListByIds(Collection<? extends Serializable> idList) {
         List<T> list = baseMapper.selectBatchIds(idList);
-        List<N> resultList = new ArrayList<>();
+        List<DTO> resultList = new ArrayList<>();
         if(!CollectionUtils.isEmpty(list)){
-            for(T t : list){
-                N n = (N) X2Y(t);
+            for (T t : list) {
+                DTO n = entityToDto(t);
                 resultList.add(n);
             }
         }
@@ -121,14 +135,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T, N> implements IService<N> {
      * @return
      */
     @Override
-    public List<N> getListByMap(Map<String, Object> map) {
-        List<T> list =  baseMapper.selectByMap(map);
-        List<N> resultList = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(list)){
-            for(T t : list){
-                N n = (N) X2Y(t);
-                resultList.add(n);
-            }
+    public List<DTO> getListByColumnMap(Map<String, Object> map) {
+        List<T> list = baseMapper.selectByMap(map);
+        List<DTO> resultList = new ArrayList<>();
+        for (T t : list) {
+            DTO dto = entityToDto(t);
+            resultList.add(dto);
         }
         return resultList;
     }
@@ -140,25 +152,83 @@ public class ServiceImpl<M extends BaseMapper<T>, T, N> implements IService<N> {
      * @return
      */
     @Override
-    public int getCount(Map<String, Object> map) {
-
-        return 0;
+    public int getCountByColumnMap(Map<String, Object> map) {
+        int count = 0;
+        List<T> list = baseMapper.selectByMap(map);
+        if (null != list) {
+            count = list.size();
+        }
+        return count;
     }
 
     /**
-     * 根据参数分页
+     * 根据map分页
+     *
      * @param pageNo
      * @param pageSize
      * @param map
      * @return
      */
     @Override
-    public PageInfo<N> getPageInfo(int pageNo, int pageSize, Map<String, Object> map) {
-        if(pageNo <= 0) pageNo = 1;
-        if(pageSize <=0) pageSize=10;
+    public PageInfo getPageInfoByColumnMap(int pageNo, int pageSize, Map<String, Object> map) {
+        if (pageNo <= 0) pageNo = 1;
+        if (pageSize <= 0) pageSize = 10;
         PageHelper.startPage(pageNo, pageSize);
-        List<N> list = getListByMap(map);
-        PageInfo<N> pageInfo = new PageInfo<>(list);
+        List<DTO> dtoList = getListByColumnMap(map);
+        PageInfo pageInfo = PageInfo.getPageInfo(dtoList);
+        return pageInfo;
+    }
+
+    /**
+     * 根据example查询
+     *
+     * @param example
+     * @return
+     */
+    @Override
+    public List<DTO> getList(Serializable example) {
+        List<T> list = baseMapper.selectByExample(example);
+        List<DTO> resultList = new ArrayList<>();
+        if (null != list) {
+            for (T t : list) {
+                DTO dto = entityToDto(t);
+                resultList.add(dto);
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * 根据example查询总数量
+     *
+     * @param example
+     * @return
+     */
+    @Override
+    public int getCount(Serializable example) {
+        int count = 0;
+        List<DTO> list = getList(example);
+        if (null != list) {
+            count = list.size();
+        }
+        return count;
+    }
+
+    /**
+     * 根据example分页
+     *
+     * @param pageNo
+     * @param pageSize
+     * @param example
+     * @return
+     */
+    @Override
+    public PageInfo getPageInfo(int pageNo, int pageSize, Serializable example) {
+        if (pageNo <= 0) pageNo = 1;
+        if (pageSize <= 0) pageSize = 10;
+        PageHelper.startPage(pageNo, pageSize);
+        List<DTO> list = getList(example);
+        PageInfo pageInfo = PageInfo.getPageInfo(list);
         return pageInfo;
     }
 }

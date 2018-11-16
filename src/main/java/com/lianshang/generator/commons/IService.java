@@ -1,6 +1,5 @@
 package com.lianshang.generator.commons;
 
-import com.github.pagehelper.PageInfo;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -17,10 +16,10 @@ public interface IService<N> {
 
     /**
      * 根据id修改对象
-     * @param id
+     * @param n
      * @return
      */
-    public boolean updateById(Serializable id);
+    public boolean update(N n);
 
     /**
      * 根据id删除对象(逻辑删除)
@@ -46,14 +45,14 @@ public interface IService<N> {
      * @param map
      * @return
      */
-    public List<N> getListByMap(Map<String, Object> map);
+    public List<N> getListByColumnMap(Map<String, Object> map);
 
     /**
      * 根据map查询总数量
      * @param map
      * @return
      */
-    public int getCount(Map<String, Object> map);
+    public int getCountByColumnMap(Map<String, Object> map);
 
     /**
      * 根据map分页
@@ -62,5 +61,28 @@ public interface IService<N> {
      * @param map
      * @return
      */
-    public PageInfo<N> getPageInfo(int pageNo, int pageSize, Map<String, Object> map);
+    public PageInfo getPageInfoByColumnMap(int pageNo, int pageSize, Map<String, Object> map);
+
+    /**
+     * 根据example查询
+     * @param example
+     * @return
+     */
+    public List<N> getList(Serializable example);
+
+    /**
+     * 根据example查询总数量
+     * @param example
+     * @return
+     */
+    public int getCount(Serializable example);
+
+    /**
+     * 根据map分页
+     * @param pageNo
+     * @param pageSize
+     * @param example
+     * @return
+     */
+    public PageInfo getPageInfo(int pageNo, int pageSize, Serializable example);
 }

@@ -17,6 +17,6 @@ import org.springframework.stereotype.Service;
  * @since ${date}
  */
 @Service
-public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName},${entity}, ${entity}Dto> implements ${table.serviceName} {
+public class ${table.serviceImplName} extends LsBaseMapper<${table.mapperName},${entity}, ${entity}Dto> implements ${table.serviceName} {
 
 }

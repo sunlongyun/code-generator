@@ -4,7 +4,7 @@ import ${package.Entity}.${entity};
 import ${superMapperClassPackage};
 import ${cfg.examplePath}.${entity}Example;
 import java.util.List;
-
+import com.lianshang.generator.commons.LsBaseMapper;
 /**
  * <p>
  * ${table.comment!} Mapper 接口
@@ -16,7 +16,7 @@ import java.util.List;
 <#if kotlin>
 interface ${table.mapperName} : ${superMapperClass}<${entity}>
 <#else>
-public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
+public interface ${table.mapperName} extends LsBaseMapper<${entity}> {
        /**
        ** 通用查询
        **/

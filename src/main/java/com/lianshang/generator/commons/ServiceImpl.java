@@ -227,8 +227,18 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
         if (pageNo <= 0) pageNo = 1;
         if (pageSize <= 0) pageSize = 10;
         PageHelper.startPage(pageNo, pageSize);
-        List<DTO> list = getList(example);
+        List<T> list = baseMapper.selectByExample(example);
         PageInfo pageInfo = PageInfo.getPageInfo(list);
+        List<DTO> resultList = new ArrayList<>();
+        if (null != list) {
+            for (T t : list) {
+                DTO dto = entityToDto(t);
+                resultList.add(dto);
+            }
+        }
+        pageInfo.setDataList(resultList);
+        int currentNum = pageNo * pageSize;
+        pageInfo.setHasMore(currentNum < pageInfo.getTotal());
         return pageInfo;
     }
 }

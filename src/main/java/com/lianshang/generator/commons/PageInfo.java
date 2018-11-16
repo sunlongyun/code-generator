@@ -18,7 +18,7 @@ public class PageInfo implements Serializable{
 	private Long total;
 	private Integer pages;
 	private List dataList;
-	private boolean hasMore;
+	private Boolean hasMore = true;
 
 	public Integer getPageNo() {
 		return pageNo;
@@ -52,12 +52,11 @@ public class PageInfo implements Serializable{
 		this.dataList = list;
 	}
 
-	public boolean isHasMore() {
-
-		return pageNo * pageSize < total;
+	public Boolean getHasMore() {
+		return hasMore;
 	}
 
-	public void setHasMore(boolean hasMore) {
+	public void setHasMore(Boolean hasMore) {
 		this.hasMore = hasMore;
 	}
 
@@ -79,6 +78,7 @@ public class PageInfo implements Serializable{
 		List<M> ll = new ArrayList<>();
 		ll.addAll(pageInfo.getList());
 		pInfo.setDataList(ll);
+		pInfo.setHasMore(pageInfo.getPageNum() * pageInfo.getPageSize() < pageInfo.getTotal());
 		return pInfo;
 	}
 	@Override

@@ -17,9 +17,6 @@ import com.lianshang.generator.commons.LsBaseMapper;
 interface ${table.mapperName} : ${superMapperClass}<${entity}>
 <#else>
 public interface ${table.mapperName} extends LsBaseMapper<${entity}> {
-       /**
-       ** 通用查询
-       **/
-       public List<${entity}> selectByExample(${entity}Example example);
+
 }
 </#if>

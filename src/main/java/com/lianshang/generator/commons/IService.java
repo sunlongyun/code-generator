@@ -1,6 +1,5 @@
 package com.lianshang.generator.commons;
 
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;

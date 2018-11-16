@@ -1,11 +1,14 @@
 package com.lianshang.generator.commons;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +20,7 @@ import java.util.Map;
  * @AUTHOR 孙龙云
  * @date 2018-11-14 下午6:10
  */
+@Slf4j
 public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<DTO> {
     @Autowired
     protected M baseMapper;
@@ -92,8 +96,44 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      */
     @Override
     public boolean deleteById(Serializable id) {
-        int r = baseMapper.deleteById(id);
-        return r >0;
+        T t = baseMapper.selectById(id);
+        try {
+
+            Field f = t.getClass().getDeclaredField("validity");
+            if (null == f) throw new RuntimeException("未定义[validity]逻辑删除字段");
+            f.setAccessible(true);
+            f.set(t, false);
+            f.setAccessible(false);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("未定义[validity]逻辑删除字段");
+        }
+        baseMapper.update(t, new Wrapper<T>() {
+            @Override
+            public T getEntity() {
+                try {
+
+                    T conditionT = (T) t.getClass().newInstance();
+                    Field filedId = t.getClass().getDeclaredField("id");
+                    filedId.setAccessible(true);
+                    filedId.set(conditionT, id);
+                    filedId.setAccessible(false);
+
+                    return conditionT;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            public String getSqlSegment() {
+                return null;
+            }
+        });
+        return true;
     }
 
     /**
@@ -126,57 +166,6 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
             }
         }
         return resultList;
-    }
-
-    /**
-     * 根据map查询对象列表
-     *
-     * @param map
-     * @return
-     */
-    @Override
-    public List<DTO> getListByColumnMap(Map<String, Object> map) {
-        List<T> list = baseMapper.selectByMap(map);
-        List<DTO> resultList = new ArrayList<>();
-        for (T t : list) {
-            DTO dto = entityToDto(t);
-            resultList.add(dto);
-        }
-        return resultList;
-    }
-
-    /**
-     * 根据map查询总数量
-     *
-     * @param map
-     * @return
-     */
-    @Override
-    public int getCountByColumnMap(Map<String, Object> map) {
-        int count = 0;
-        List<T> list = baseMapper.selectByMap(map);
-        if (null != list) {
-            count = list.size();
-        }
-        return count;
-    }
-
-    /**
-     * 根据map分页
-     *
-     * @param pageNo
-     * @param pageSize
-     * @param map
-     * @return
-     */
-    @Override
-    public PageInfo getPageInfoByColumnMap(int pageNo, int pageSize, Map<String, Object> map) {
-        if (pageNo <= 0) pageNo = 1;
-        if (pageSize <= 0) pageSize = 10;
-        PageHelper.startPage(pageNo, pageSize);
-        List<DTO> dtoList = getListByColumnMap(map);
-        PageInfo pageInfo = PageInfo.getPageInfo(dtoList);
-        return pageInfo;
     }
 
     /**

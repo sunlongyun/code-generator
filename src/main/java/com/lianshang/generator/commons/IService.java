@@ -4,7 +4,6 @@ package com.lianshang.generator.commons;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public interface IService<N> {
     /**
@@ -39,29 +38,6 @@ public interface IService<N> {
      * @return
      */
     public List<N> getListByIds(Collection<? extends Serializable> idList);
-
-    /**
-     * 根据map查询对象列表
-     * @param map
-     * @return
-     */
-    public List<N> getListByColumnMap(Map<String, Object> map);
-
-    /**
-     * 根据map查询总数量
-     * @param map
-     * @return
-     */
-    public int getCountByColumnMap(Map<String, Object> map);
-
-    /**
-     * 根据map分页
-     * @param pageNo
-     * @param pageSize
-     * @param map
-     * @return
-     */
-    public PageInfo getPageInfoByColumnMap(int pageNo, int pageSize, Map<String, Object> map);
 
     /**
      * 根据example查询

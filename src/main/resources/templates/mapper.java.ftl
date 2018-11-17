@@ -2,7 +2,6 @@ package ${package.Mapper};
 
 import ${package.Entity}.${entity};
 import ${superMapperClassPackage};
-import ${cfg.examplePath}.${entity}Example;
 import java.util.List;
 import com.lianshang.generator.commons.LsBaseMapper;
 /**

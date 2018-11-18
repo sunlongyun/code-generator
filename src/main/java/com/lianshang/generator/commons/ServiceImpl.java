@@ -1,18 +1,20 @@
 package com.lianshang.generator.commons;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.github.pagehelper.PageHelper;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.github.pagehelper.PageHelper;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 描述:
@@ -82,6 +84,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * @return
      */
     @Override
+    @Transactional
     public boolean update(DTO n) {
         T target = dtoToEntity(n);
         int r = baseMapper.updateById(target);

@@ -37,7 +37,9 @@ public class DynamicDatasource extends AbstractRoutingDataSource{
 	private static ThreadLocal<String> dataSourceKey = new ThreadLocal<>();
 	@Override
 	protected Object determineCurrentLookupKey() {
-		return dataSourceKey.get();
+		String key = dataSourceKey.get();
+		log.info("key==>{}", key);
+		return key;
 	}
 	
 	/**

@@ -69,6 +69,7 @@ import com.github.pagehelper.PageHelper;
 @EnableConfigurationProperties(MybatisPlusProperties.class)
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 @ConditionalOnProperty("mybatis-plus.mapper-locations")
+@ConditionalOnMissingBean(SqlSessionFactory.class)
 public class SessionFactoryBeanConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(MybatisPlusAutoConfiguration.class);

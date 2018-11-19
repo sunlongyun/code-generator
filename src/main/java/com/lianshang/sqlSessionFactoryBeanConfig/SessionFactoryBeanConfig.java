@@ -146,6 +146,10 @@ public class SessionFactoryBeanConfig {
         if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
             factory.setMapperLocations(this.properties.resolveMapperLocations());
         }
+
+        //pageherper
+        factory.setPlugins(new Interceptor[]{pageHelper()});
+
         GlobalConfig globalConfig;
         if (!ObjectUtils.isEmpty(this.properties.getGlobalConfig())) {
             globalConfig = this.properties.getGlobalConfig();

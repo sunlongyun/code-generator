@@ -33,7 +33,9 @@ public class DynamicDatasourceConfig {
     	List<PkgDtsCfg> pkgDtsCfgs =  provider.getIfAvailable();
     	
     	if(null != pkgDtsCfgs && !pkgDtsCfgs.isEmpty()){
+    		int num = 0;
     		for(PkgDtsCfg pkgDtsCfg : pkgDtsCfgs){
+    			num++;
     			Map<String, String> config =  pkgDtsCfg.getConfig();
     			Iterator<String> iterator =  config.keySet().iterator();
     			while(iterator.hasNext()){
@@ -47,11 +49,21 @@ public class DynamicDatasourceConfig {
     			DynamicDatasource.putKey(key);
     			}
     		}
-    		
-    		//有数据源，则第一个设置为默认数据源
-    	    Object firstDataSource  = targetDataSources.values().iterator().next();
-    		dynamicDataSource.setDefaultTargetDataSource(firstDataSource);
-    		targetDataSources.put(DynamicDatasource.defaultKey, firstDataSource);
+    		if(num >0){
+				//有数据源，则第一个设置为默认数据源
+				Object firstDataSource  = targetDataSources.values().iterator().next();
+				dynamicDataSource.setDefaultTargetDataSource(firstDataSource);
+				targetDataSources.put(DynamicDatasource.defaultKey, firstDataSource);
+			}else{
+				Map<String, DataSource> dataSourceMap = applicationContext.getBeansOfType(DataSource.class);
+				if(dataSourceMap.isEmpty()){
+					log.error("请注意!!! 当前环境无可用的数据源......");
+				}else {
+					Object firstDataSource =  dataSourceMap.values().iterator().next();
+					dynamicDataSource.setDefaultTargetDataSource(firstDataSource);
+					targetDataSources.put(DynamicDatasource.defaultKey, firstDataSource);
+				}
+			}
     	}
     
 		dynamicDataSource.setTargetDataSources(targetDataSources);

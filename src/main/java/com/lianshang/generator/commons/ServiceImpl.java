@@ -32,7 +32,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * @param entity
      * @return
      */
-    private DTO entityToDto(T entity) {
+    public DTO entityToDto(T entity) {
         try {
             String xClassName = entity.getClass().getName();
             String yClassName = xClassName.replaceAll("entity\\.","dto\\.")+"Dto";
@@ -51,7 +51,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * @param dto
      * @return
      */
-    private T dtoToEntity(Object dto) {
+    public T dtoToEntity(Object dto) {
         try {
             String xClassName = dto.getClass().getName();
             String yClassName = xClassName

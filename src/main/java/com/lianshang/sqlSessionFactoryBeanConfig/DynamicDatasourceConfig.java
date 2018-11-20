@@ -1,24 +1,29 @@
 package com.lianshang.sqlSessionFactoryBeanConfig;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Configuration
+@ConditionalOnBean(DataSource.class)
+@ConditionalOnWebApplication
 public class DynamicDatasourceConfig {
+
 	@Bean("dynamicDatasource")
     @ConditionalOnMissingBean
+	@Primary
     public  DynamicDatasource getDynamicDatasource(ApplicationContext applicationContext, ObjectProvider<List<PkgDtsCfg>> provider){
     	//动态数据源
     	DynamicDatasource dynamicDataSource = new DynamicDatasource();

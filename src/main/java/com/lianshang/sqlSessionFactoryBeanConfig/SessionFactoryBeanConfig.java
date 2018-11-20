@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -70,9 +71,10 @@ import com.github.pagehelper.PageHelper;
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 @ConditionalOnProperty("mybatis-plus.mapper-locations")
 @ConditionalOnMissingBean(SqlSessionFactory.class)
+@ConditionalOnBean(DynamicDatasource.class)
 public class SessionFactoryBeanConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(MybatisPlusAutoConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(SessionFactoryBeanConfig.class);
 
     private final MybatisPlusProperties properties;
 

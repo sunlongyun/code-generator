@@ -49,7 +49,7 @@ public class DynamicDatasourceConfig {
     			DynamicDatasource.putKey(key);
     			}
     		}
-    		if(num >0){
+			if (num > 0 && !targetDataSources.values().isEmpty()) {
 				//有数据源，则第一个设置为默认数据源
 				Object firstDataSource  = targetDataSources.values().iterator().next();
 				dynamicDataSource.setDefaultTargetDataSource(firstDataSource);

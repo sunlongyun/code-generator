@@ -10,21 +10,21 @@ public interface IService<N> {
      * @param n
      * @return
      */
-    public boolean save(N n);
+    public Boolean save(N n);
 
     /**
      * 根据id修改对象
      * @param n
      * @return
      */
-    public boolean update(N n);
+    public Boolean update(N n);
 
     /**
      * 根据id删除对象(逻辑删除)
      * @param id
      * @return
      */
-    public boolean deleteById(Serializable id);
+    public Boolean deleteById(Serializable id);
     /**
      * 根据id查询对象
      * @param id

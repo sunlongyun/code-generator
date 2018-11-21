@@ -56,8 +56,6 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
               .replaceAll("dto\\.", "entity\\.").replaceAll("Dto$", "");
             Object target = Class.forName(yClassName).newInstance();
             BeanUtils.copyProperties(dto, target);
-            //string 类型的空字段 赋值''
-            setDefaultValueForStringFileds(target);
             return (T) target;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -65,26 +63,6 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
         return null;
     }
 
-    /**
-     * string类型字段默认值 ''
-     * @param target
-     * @throws IllegalAccessException
-     */
-    private void setDefaultValueForStringFileds(Object target) throws IllegalAccessException {
-        Field[] fields = target.getClass().getDeclaredFields();
-        if (null != fields) {
-            for (Field field : fields) {
-                if (field.getType() == String.class) {
-                    String value = (String) field.get(target);
-                    if (null == value) {
-                        field.setAccessible(true);
-                        field.set(field, "");
-                        field.setAccessible(false);
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * 拷贝列表
@@ -127,7 +105,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * @return
      */
     @Override
-    public boolean save(DTO n) {
+    public Boolean save(DTO n) {
         T target = dtoToEntity(n);
         int r = baseMapper.insert(target);
         return r > 0;
@@ -141,7 +119,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      */
     @Override
     @Transactional
-    public boolean update(DTO n) {
+    public Boolean update(DTO n) {
         T target = dtoToEntity(n);
         int r = baseMapper.updateById(target);
         return r > 0;
@@ -154,7 +132,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * @return
      */
     @Override
-    public boolean deleteById(Serializable id) {
+    public Boolean deleteById(Serializable id) {
         T t = baseMapper.selectById(id);
         try {
 

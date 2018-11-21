@@ -59,5 +59,5 @@ public interface IService<N> {
      * @param example
      * @return
      */
-    public PageInfo getPageInfo(int pageNo, int pageSize, Serializable example);
+    public PageInfo getPageInfo(Integer pageNo, Integer pageSize, Serializable example);
 }

@@ -1,20 +1,18 @@
 package com.lianshang.generator.commons;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.github.pagehelper.PageHelper;
-
-import lombok.extern.slf4j.Slf4j;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 描述:
@@ -215,9 +213,11 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * @return
      */
     @Override
-    public PageInfo getPageInfo(int pageNo, int pageSize, Serializable example) {
-        if (pageNo <= 0) pageNo = 1;
-        if (pageSize <= 0) pageSize = 10;
+    public PageInfo getPageInfo(Integer pageNo, Integer pageSize, Serializable example) {
+
+        if (null == pageNo || pageNo <= 0) pageNo = 1;
+        if (null == pageSize || pageSize <= 0) pageSize = 10;
+
         PageHelper.startPage(pageNo, pageSize);
         List<T> list = baseMapper.selectByExample(example);
         PageInfo pageInfo = PageInfo.getPageInfo(list);

@@ -66,20 +66,36 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     /**
      * 拷贝列表
      */
-    public <Y> List<Y> copyList(List<?> sourceList, Class<Y> yClass){
+    public <Y> List<Y> copyList(List<?> sourceList, Class<Y> yClass) {
         List<Y> list = new ArrayList<>();
-        if(null != sourceList){
+        if (null != sourceList) {
             try {
-                for(Object source : sourceList){
-                    Y y =  yClass.newInstance();
+                for (Object source : sourceList) {
+                    Y y = yClass.newInstance();
                     BeanUtils.copyProperties(source, y);
                     list.add(y);
                 }
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
         return list;
+    }
+
+    /**
+     * 拷贝对象
+     */
+    public <Y> Y copyObj(Object source, Class<Y> yClass) {
+        try {
+            Y y = yClass.newInstance();
+            if(null != source){
+                BeanUtils.copyProperties(source, y);
+            }
+            return y;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
     /**
      * 添加对象

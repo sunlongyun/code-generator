@@ -126,6 +126,38 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     }
 
     /**
+     * 批量更新
+     *
+     * @param n
+     * @param example
+     * @return
+     */
+    public Boolean batchUpdate(DTO n, Serializable example) {
+        try {
+            if(null == example){
+                throw new RuntimeException("批量更新条件不能为空");
+            }
+            List<DTO> dtoList = getList(example);
+            if(null != dtoList){
+                for(DTO dto : dtoList){
+                    Field filedId = n.getClass().getDeclaredField("id");
+                    filedId.setAccessible(true);
+                    Object id = filedId.get(dto);
+                    filedId.set(n, id);
+
+                    filedId.setAccessible(false);
+
+                    update(n);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+    /**
      * 根据id删除对象(逻辑删除)
      *
      * @param id

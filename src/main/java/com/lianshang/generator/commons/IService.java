@@ -20,6 +20,13 @@ public interface IService<N> {
     public Boolean update(N n);
 
     /**
+     * 批量更新
+     * @param n
+     * @param example
+     * @return
+     */
+    public Boolean batchUpdate(N n, Serializable example);
+    /**
      * 根据id删除对象(逻辑删除)
      * @param id
      * @return
@@ -60,4 +67,5 @@ public interface IService<N> {
      * @return
      */
     public PageInfo getPageInfo(Integer pageNo, Integer pageSize, Serializable example);
+
 }

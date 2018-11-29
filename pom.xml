@@ -5,7 +5,7 @@
 
 	<groupId>com.lianshang</groupId>
 	<artifactId>code-generator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>code-generator</name>
@@ -88,7 +88,7 @@
 			<id>snapshots</id>
 			<name>ActivityCenter Porject Snapshot</name>
 			<!--http://ip地址/nexus/content/repositories/snapshots/-->
-			<url>http://artifactory.lsfash.cn/artifactory/libs-snapshot-local</url>
+			<url>http://artifactory.lsfash.cn/artifactory/libs-local</url>
 			<uniqueVersion>true</uniqueVersion>
 		</snapshotRepository>
 

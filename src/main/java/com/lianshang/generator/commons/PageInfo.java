@@ -10,7 +10,7 @@ import java.util.List;
  * @author 孙龙云
  */
 
-public class PageInfo implements Serializable{
+public class PageInfo<T> implements Serializable {
 
 	private static final long serialVersionUID = 1727384513155705568L;
 	private Integer pageNo;
@@ -80,6 +80,26 @@ public class PageInfo implements Serializable{
 		pInfo.setDataList(ll);
 		pInfo.setHasMore(pageInfo.getPageNum() * pageInfo.getPageSize() < pageInfo.getTotal());
 		return pInfo;
+	}
+
+	/**
+	 * 获取泛型对象
+	 * @param tClass
+	 * @return
+	 */
+	public PageInfo<T> getPageInfo(Class<T> tClass) {
+		PageInfo pageInfo = this;
+		List list = pageInfo.getDataList();
+		List<T> dataList = new ArrayList<>();
+		if(null != list){
+			for(Object o : list){
+				String jsonValue = JsonUtils.object2JsonString(o);
+				T t = JsonUtils.json2Object(jsonValue, tClass);
+				dataList.add(t);
+			}
+		}
+		pageInfo.setDataList(dataList);
+		return pageInfo;
 	}
 	@Override
 	public String toString() {

@@ -307,7 +307,6 @@ public class SessionFactoryBeanConfig {
         return transactionManager;
     }
     
-    
     /**
      * pager-helper配置
      */

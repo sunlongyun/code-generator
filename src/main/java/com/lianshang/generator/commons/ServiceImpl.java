@@ -299,6 +299,8 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
         pageInfo.setDataList(resultList);
         int currentNum = pageNo * pageSize;
         pageInfo.setHasMore(currentNum < pageInfo.getTotal());
+        //处理total小于pageSize,pageSize自己变小的问题
+        pageInfo.setPageSize(pageSize);
         return pageInfo;
     }
 }

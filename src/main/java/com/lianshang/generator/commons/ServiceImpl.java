@@ -178,15 +178,25 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     public Boolean deleteById(Serializable id) {
         T t = baseMapper.selectById(id);
         try {
-
             Field f = t.getClass().getDeclaredField("validity");
+
             if (null == f) throw new RuntimeException("未定义[validity]逻辑删除字段");
+
             f.setAccessible(true);
             f.set(t, false);
             f.setAccessible(false);
+
         } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new RuntimeException("未定义[validity]逻辑删除字段");
+            try {
+                Field f = t.getClass().getDeclaredField("validity");
+                if (null == f) throw new RuntimeException("未定义[validity]逻辑删除字段");
+                f.setAccessible(true);
+                f.set(t, 0);
+                f.setAccessible(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("未定义[validity]逻辑删除字段");
+            }
         }
         baseMapper.update(t, new Wrapper<T>() {
             @Override

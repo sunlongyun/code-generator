@@ -110,11 +110,15 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
         int r = baseMapper.insert(target);
         try {
             //id 拷贝
-            Field filedId = target.getClass().getDeclaredField("id");
-            filedId.setAccessible(true);
-            Object id = filedId.get(n);
-            filedId.set(n, id);
-            filedId.setAccessible(false);
+            Field entityId = target.getClass().getDeclaredField("id");
+            Field dtoId = n.getClass().getDeclaredField("id");
+            entityId.setAccessible(true);
+            dtoId.setAccessible(true);
+            Object id = entityId.get(target);//value
+            dtoId.set(n, id);
+
+            entityId.setAccessible(false);
+            dtoId.setAccessible(false);
         }catch (Exception ex){
             ex.printStackTrace();
             log.error("id拷贝异常:", ex);

@@ -108,6 +108,17 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     public Boolean save(DTO n) {
         T target = dtoToEntity(n);
         int r = baseMapper.insert(target);
+        try {
+            //id 拷贝
+            Field filedId = target.getClass().getDeclaredField("id");
+            filedId.setAccessible(true);
+            Object id = filedId.get(n);
+            filedId.set(n, id);
+            filedId.setAccessible(false);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            log.error("id拷贝异常:",e);
+        }
         return r > 0;
     }
 

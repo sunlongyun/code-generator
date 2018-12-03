@@ -117,7 +117,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
             filedId.setAccessible(false);
         }catch (Exception ex){
             ex.printStackTrace();
-            log.error("id拷贝异常:",e);
+            log.error("id拷贝异常:", ex);
         }
         return r > 0;
     }

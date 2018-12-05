@@ -333,11 +333,11 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * 根据id查询对象
      *
      * @param id
-     * @param dtoClass
+     * @param dtoClassName
      * @return
      */
     @Override
-    public DTO getById(Serializable id, Class<DTO> dtoClass) {
+    public DTO getById(Serializable id, String dtoClassName) {
         return getById(id);
     }
 
@@ -345,11 +345,11 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * 根据id列表查询对象列表
      *
      * @param idList
-     * @param dtoClass
+     * @param dtoClassName
      * @return
      */
     @Override
-    public List<DTO> getListByIds(Collection<? extends Serializable> idList, Class<DTO> dtoClass) {
+    public List<DTO> getListByIds(Collection<? extends Serializable> idList, String dtoClassName) {
         return getListByIds(idList);
     }
 
@@ -357,11 +357,11 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * 根据example查询
      *
      * @param example
-     * @param dtoClass
+     * @param dtoClassName
      * @return
      */
     @Override
-    public List<DTO> getList(Serializable example, Class<DTO> dtoClass) {
+    public List<DTO> getList(Serializable example, String dtoClassName) {
         return getList(example);
     }
 }

@@ -38,6 +38,13 @@ public interface IService<N> {
      * @return
      */
     public N getById(Serializable id);
+
+    /**
+     * 根据id查询对象
+     * @param id
+     * @return
+     */
+    public N getById(Serializable id, Class<N> nClass);
     /**
      * 根据id列表查询对象列表
      * @param idList
@@ -46,11 +53,25 @@ public interface IService<N> {
     public List<N> getListByIds(Collection<? extends Serializable> idList);
 
     /**
+     * 根据id列表查询对象列表
+     * @param idList
+     * @return
+     */
+    public List<N> getListByIds(Collection<? extends Serializable> idList, Class<N> nClass);
+
+    /**
      * 根据example查询
      * @param example
      * @return
      */
     public List<N> getList(Serializable example);
+
+    /**
+     * 根据example查询
+     * @param example
+     * @return
+     */
+    public List<N> getList(Serializable example, Class<N> nClass);
 
     /**
      * 根据example查询总数量

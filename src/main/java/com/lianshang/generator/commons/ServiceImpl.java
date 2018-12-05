@@ -216,7 +216,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
                     return conditionT;
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
 
                 return null;
@@ -327,5 +327,41 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
         //处理total小于pageSize,pageSize自己变小的问题
         pageInfo.setPageSize(pageSize);
         return pageInfo;
+    }
+
+    /**
+     * 根据id查询对象
+     *
+     * @param id
+     * @param dtoClass
+     * @return
+     */
+    @Override
+    public DTO getById(Serializable id, Class<DTO> dtoClass) {
+        return getById(id);
+    }
+
+    /**
+     * 根据id列表查询对象列表
+     *
+     * @param idList
+     * @param dtoClass
+     * @return
+     */
+    @Override
+    public List<DTO> getListByIds(Collection<? extends Serializable> idList, Class<DTO> dtoClass) {
+        return getListByIds(idList);
+    }
+
+    /**
+     * 根据example查询
+     *
+     * @param example
+     * @param dtoClass
+     * @return
+     */
+    @Override
+    public List<DTO> getList(Serializable example, Class<DTO> dtoClass) {
+        return getList(example);
     }
 }

@@ -240,7 +240,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     public DTO getById(Serializable id) {
         T t = baseMapper.selectById(id);
         if(null == t){
-            throw new RuntimeException("未查询到对象");
+            return null;
         }
         DTO n = entityToDto(t);
         return n;

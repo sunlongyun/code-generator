@@ -37,6 +37,7 @@ public interface IService<N> {
      * @param id
      * @return
      */
+    @Deprecated
     public N getById(Serializable id);
 
     /**
@@ -50,6 +51,7 @@ public interface IService<N> {
      * @param idList
      * @return
      */
+    @Deprecated
     public List<N> getListByIds(Collection<? extends Serializable> idList);
 
     /**
@@ -64,6 +66,7 @@ public interface IService<N> {
      * @param example
      * @return
      */
+    @Deprecated
     public List<N> getList(Serializable example);
 
     /**

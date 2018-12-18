@@ -5,7 +5,9 @@ Copyright (c) 2018 basic-component
 该组件是一款基于mybatis-plus开发的 继承 "通用代码生成","通用方法封装"的工具,旨在提高代码的开发效率.
 
 
-一. mybatis-plus简介:
+一. CODE-GENERATOR 简单介绍
+
+mybatis-plus简介:
 #
 无侵入：只做增强不做改变，引入它不会对现有工程产生影响，如丝般顺滑
 损耗小：启动即会自动注入基本 CURD，性能基本无损耗，直接面向对象操作

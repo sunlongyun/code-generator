@@ -2,7 +2,7 @@ CODE-GENERATOR代码生成器使用说明书
 
 Copyright (c) 2018 basic-component
 
-该组件是一款基于mybatis-plus开发的 集 "通用代码生成","公共类封装"的工具,旨在提高代码的开发效率.
+该组件是一款基于mybatis-plus开发的 继承 "通用代码生成","通用方法封装"的工具,旨在提高代码的开发效率.
 
 
 一. mybatis-plus简介:

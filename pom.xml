@@ -5,7 +5,7 @@
 
 	<groupId>com.lianshang</groupId>
 	<artifactId>code-generator</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2-SNAPSHORT</version>
 	<packaging>jar</packaging>
 
 	<name>code-generator</name>

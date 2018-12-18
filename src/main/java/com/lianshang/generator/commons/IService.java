@@ -41,6 +41,7 @@ public interface IService<N> {
     public N getById(Serializable id);
 
     /**
+     * 0.0.2版本该方法已废除,不建议继续使用
      * 根据id查询对象
      * @param id
      * @return
@@ -55,6 +56,7 @@ public interface IService<N> {
     public List<N> getListByIds(Collection<? extends Serializable> idList);
 
     /**
+     * 0.0.2版本该方法已废除,不建议继续使用
      * 根据id列表查询对象列表
      * @param idList
      * @return
@@ -70,6 +72,7 @@ public interface IService<N> {
     public List<N> getList(Serializable example);
 
     /**
+     * 0.0.2版本该方法已废除,不建议继续使用
      * 根据example查询
      * @param example
      * @return

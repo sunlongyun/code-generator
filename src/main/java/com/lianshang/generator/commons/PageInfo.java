@@ -45,8 +45,17 @@ public class PageInfo<T> implements Serializable {
 	public void setPages(Integer pages) {
 		this.pages = pages;
 	}
-	public List getDataList() {
-		return dataList;
+
+	public List<T> getDataList(Class<T> tClass) {
+		List<T> list = new ArrayList<>();
+		if(null != dataList){
+			for(Object o : dataList){
+				String jsonValue = JsonUtils.object2JsonString(o);
+				T t = JsonUtils.json2Object(jsonValue, tClass);
+				list.add(t);
+			}
+		}
+		return list;
 	}
 	public void setDataList(List list) {
 		this.dataList = list;
@@ -83,22 +92,14 @@ public class PageInfo<T> implements Serializable {
 	}
 
 	/**
-	 * 获取泛型对象
+	 * 根据泛型类,反序列对象
 	 * @param tClass
 	 * @return
 	 */
 	public PageInfo<T> getPageInfo(Class<T> tClass) {
 		PageInfo pageInfo = this;
-		List list = pageInfo.getDataList();
-		List<T> dataList = new ArrayList<>();
-		if(null != list){
-			for(Object o : list){
-				String jsonValue = JsonUtils.object2JsonString(o);
-				T t = JsonUtils.json2Object(jsonValue, tClass);
-				dataList.add(t);
-			}
-		}
-		pageInfo.setDataList(dataList);
+		List<T> list = pageInfo.getDataList(tClass);
+		pageInfo.setDataList(list);
 		return pageInfo;
 	}
 	@Override

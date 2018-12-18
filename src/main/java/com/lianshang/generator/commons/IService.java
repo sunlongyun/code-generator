@@ -32,12 +32,12 @@ public interface IService<N> {
      * @return
      */
     public Boolean deleteById(Serializable id);
+
     /**
      * 根据id查询对象
      * @param id
      * @return
      */
-    @Deprecated
     public N getById(Serializable id);
 
     /**
@@ -45,13 +45,13 @@ public interface IService<N> {
      * @param id
      * @return
      */
+    @Deprecated
     public N getById(Serializable id, String dtoClassName);
     /**
      * 根据id列表查询对象列表
      * @param idList
      * @return
      */
-    @Deprecated
     public List<N> getListByIds(Collection<? extends Serializable> idList);
 
     /**
@@ -59,6 +59,7 @@ public interface IService<N> {
      * @param idList
      * @return
      */
+    @Deprecated
     public List<N> getListByIds(Collection<? extends Serializable> idList, String dtoClassName);
 
     /**
@@ -66,7 +67,6 @@ public interface IService<N> {
      * @param example
      * @return
      */
-    @Deprecated
     public List<N> getList(Serializable example);
 
     /**
@@ -74,6 +74,7 @@ public interface IService<N> {
      * @param example
      * @return
      */
+    @Deprecated
     public List<N> getList(Serializable example, String dtoClassName);
 
     /**

@@ -30,9 +30,9 @@ public class LsCodeGeneratorUtil {
     private static String password = "hcblihiNRqiy58rp";
     private static String tableName = "pc_cloth_order";
 
-    public static void main(String[] args) {
-        generateCode(moduleName, packageParent, jdbcUrl, driverClassName, userName, password, tableName);
-    }
+//    public static void main(String[] args) {
+//        generateCode(moduleName, packageParent, jdbcUrl, driverClassName, userName, password, tableName);
+//    }
     /**
      * 代码生成器
      *

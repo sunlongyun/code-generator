@@ -50,6 +50,10 @@ public class PageInfo<T> implements Serializable {
 		this.pages = pages;
 	}
 
+	public String getOriginClassName() {
+		return originClassName;
+	}
+
 	/**
 	 * 解析成其他类型
 	 * @param tClass

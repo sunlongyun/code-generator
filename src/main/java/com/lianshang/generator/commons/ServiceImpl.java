@@ -320,10 +320,11 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
             }
             if (example instanceof String) {
                 String value = (String) example;
-                log.info("{}",value.startsWith("\"\\{"));
+                log.info("jsonValue=>{}", value);
 
 //                if (value.startsWith("\\{") && value.endsWith("\\}")) {
-                    exampleObj = JsonUtils.json2Object(value, exampleClass);
+                    exampleObj = FastJsonUtils.convertJSONToObject(value,exampleClass);
+//                      FastJsonUtils.convertJSONToObject(value, exampleClass);
                     return (Serializable)exampleObj;
 //                }
             }

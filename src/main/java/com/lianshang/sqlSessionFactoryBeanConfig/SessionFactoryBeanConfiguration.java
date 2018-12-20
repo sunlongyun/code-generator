@@ -1,11 +1,18 @@
 package com.lianshang.sqlSessionFactoryBeanConfig;
 
 
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.PostConstruct;
-
+import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
+import com.baomidou.mybatisplus.autoconfigure.SpringBootVFS;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.injector.ISqlInjector;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.github.pagehelper.PageHelper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
@@ -25,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,11 +42,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -48,18 +52,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
-import com.baomidou.mybatisplus.autoconfigure.SpringBootVFS;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.injector.ISqlInjector;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.github.pagehelper.PageHelper;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.util.*;
 
 /**
  * mybatis-plus 
@@ -68,13 +63,13 @@ import com.github.pagehelper.PageHelper;
 @Configuration
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 @EnableConfigurationProperties(MybatisPlusProperties.class)
-@AutoConfigureAfter(DataSourceAutoConfiguration.class)
+@AutoConfigureAfter({DataSourceAutoConfiguration.class})
+@AutoConfigureBefore({MybatisPlusAutoConfiguration.class,MybatisSqlSessionFactoryBean.class})
+@ConditionalOnMissingBean({DynamicDatasource.class,SqlSessionFactory.class})
 @ConditionalOnProperty("mybatis-plus.mapper-locations")
-@ConditionalOnMissingBean(SqlSessionFactory.class)
-@ConditionalOnBean(DynamicDatasource.class)
-public class SessionFactoryBeanConfig {
+public class SessionFactoryBeanConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(SessionFactoryBeanConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(SessionFactoryBeanConfiguration.class);
 
     private final MybatisPlusProperties properties;
 
@@ -89,19 +84,21 @@ public class SessionFactoryBeanConfig {
     private final ApplicationContext applicationContext;
     @Autowired
     private  PageHelperPropertyConfig pageHelperConfig;
-
-    public SessionFactoryBeanConfig(MybatisPlusProperties properties,
-                                        ObjectProvider<Interceptor[]> interceptorsProvider,
-                                        ResourceLoader resourceLoader,
-                                        ObjectProvider<DatabaseIdProvider> databaseIdProvider,
-                                        ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
-                                        ApplicationContext applicationContext) {
+    public SessionFactoryBeanConfiguration(MybatisPlusProperties properties,
+                                           ObjectProvider<Interceptor[]> interceptorsProvider,
+                                           ResourceLoader resourceLoader,
+                                           ObjectProvider<DatabaseIdProvider> databaseIdProvider,
+                                           ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
+                                           ApplicationContext applicationContext) {
         this.properties = properties;
         this.interceptors = interceptorsProvider.getIfAvailable();
         this.resourceLoader = resourceLoader;
         this.databaseIdProvider = databaseIdProvider.getIfAvailable();
         this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
         this.applicationContext = applicationContext;
+
+
+        logger.info("SessionFactoryBeanConfig初始化----------");
     }
 
     @PostConstruct
@@ -115,9 +112,9 @@ public class SessionFactoryBeanConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionFactory sqlSessionFactory(DynamicDatasource dataSource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DynamicDatasource dynamicDatasource) throws Exception {
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
-        factory.setDataSource(dataSource);
+        factory.setDataSource(dynamicDatasource);
         factory.setVfs(SpringBootVFS.class);
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
             factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
@@ -151,7 +148,6 @@ public class SessionFactoryBeanConfig {
 
         //pageherper
         factory.setPlugins(new Interceptor[]{pageHelper()});
-
         GlobalConfig globalConfig;
         if (!ObjectUtils.isEmpty(this.properties.getGlobalConfig())) {
             globalConfig = this.properties.getGlobalConfig();
@@ -190,7 +186,6 @@ public class SessionFactoryBeanConfig {
                 customizer.customize(configuration);
             }
         }
-        // TODO 自定义配置
         if (null != configuration) {
             configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         }
@@ -292,6 +287,8 @@ public class SessionFactoryBeanConfig {
         properties.setProperty("params", pageHelperConfig.getParams());
 
         pageHelper.setProperties(properties);
+
+        logger.info("pageHelper==>{}",pageHelperConfig);
         return pageHelper;
     }
 
@@ -302,8 +299,8 @@ public class SessionFactoryBeanConfig {
      */
     @Bean
     @Primary
-    public DataSourceTransactionManager getDataSourceTransactionManager(DynamicDatasource dataSource) {
-        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
+    public DataSourceTransactionManager getDataSourceTransactionManager(DynamicDatasource dynamicDatasource) {
+        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dynamicDatasource);
         return transactionManager;
     }
     
@@ -315,5 +312,63 @@ public class SessionFactoryBeanConfig {
     public PageHelperPropertyConfig getPageHelperConfig(){
     	return new PageHelperPropertyConfig();
     }
-    
+
+
+    @Bean("dynamicDatasource")
+    @ConditionalOnMissingBean
+    public  DynamicDatasource getDynamicDatasource(ApplicationContext applicationContext, ObjectProvider<List<PkgDtsCfg>> provider){
+        //动态数据源
+        DynamicDatasource dynamicDataSource = new DynamicDatasource();
+        //目标数据源
+        Map<Object, Object> targetDataSources = new HashMap<>();
+        //用户自定义的jar包和数据源的映射
+        List<PkgDtsCfg> pkgDtsCfgs =  provider.getIfAvailable();
+
+        int num = 0;
+        if (null != pkgDtsCfgs && !pkgDtsCfgs.isEmpty()) {
+            for(PkgDtsCfg pkgDtsCfg : pkgDtsCfgs){
+                num++;
+                Map<String, String> config =  pkgDtsCfg.getConfig();
+                Iterator<String> iterator =  config.keySet().iterator();
+                while(iterator.hasNext()){
+                    String key  = iterator.next();
+                    String dataSourceName = config.get(key);
+                    DataSource dataSource = (DataSource) applicationContext.getBean(dataSourceName);
+                    if(null == dataSource){
+                        throw new RuntimeException("未找到名字为["+dataSourceName+"]的数据源");
+                    }
+                    targetDataSources.put(key, dataSource);
+                    DynamicDatasource.putKey(key);
+                }
+            }
+        }
+
+        if (num > 0 && !targetDataSources.values().isEmpty()) {
+            //有数据源，则第一个设置为默认数据源
+            Object firstDataSource  = targetDataSources.values().iterator().next();
+            dynamicDataSource.setDefaultTargetDataSource(firstDataSource);
+            targetDataSources.put(DynamicDatasource.defaultKey, firstDataSource);
+        }else{
+            Map<String, DataSource> dataSourceMap = applicationContext.getBeansOfType(DataSource.class);
+            if(dataSourceMap.isEmpty()){
+                logger.error("请注意!!! 当前环境无可用的数据源......");
+            }else {
+                Iterator<String> it = dataSourceMap.keySet().iterator();
+                while (it.hasNext()) {
+                    String dataSourceName = it.next();
+                    //d1,d2是为了屏蔽 mybatis-plus的自动配置特意添加的
+                    if (!dataSourceName.equals("d1") && !dataSourceName.equals("d2")) {
+                        DataSource firstDataSource = dataSourceMap.get(dataSourceName);
+                        dynamicDataSource.setDefaultTargetDataSource(firstDataSource);
+                        targetDataSources.put(DynamicDatasource.defaultKey, firstDataSource);
+                        break;
+                    }
+                }
+            }
+        }
+        dynamicDataSource.setTargetDataSources(targetDataSources);
+        return dynamicDataSource;
+    }
+
+
 }

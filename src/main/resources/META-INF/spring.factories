@@ -1,3 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.lianshang.sqlSessionFactoryBeanConfig.SessionFactoryBeanConfig,\
-com.lianshang.sqlSessionFactoryBeanConfig.DynamicDatasourceConfig
+  com.lianshang.sqlSessionFactoryBeanConfig.MultilDataSourcesConfig,\
+  com.lianshang.sqlSessionFactoryBeanConfig.SessionFactoryBeanConfiguration

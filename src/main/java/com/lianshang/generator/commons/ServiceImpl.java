@@ -1,6 +1,7 @@
 package com.lianshang.generator.commons;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -10,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -180,6 +182,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      */
     @Override
     public Boolean deleteById(Serializable id) {
+
         T t = baseMapper.selectById(id);
         try {
             Field f = t.getClass().getDeclaredField("validity");
@@ -273,7 +276,10 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      */
     @Override
     public List<DTO> getList(Serializable example) {
-        List<T> list = baseMapper.selectByExample(example);
+
+        Serializable exampleObj = serializableToExample(example);
+
+        List<T> list = baseMapper.selectByExample(exampleObj);
         List<DTO> resultList = new ArrayList<>();
         if (null != list) {
             for (T t : list) {
@@ -285,6 +291,47 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     }
 
     /**
+     * serializable 转真实example对象
+     *
+     * @param example
+     * @return
+     */
+    private Serializable serializableToExample(Serializable example) {
+
+        Object exampleObj = null;
+        if (null != example) {
+            //获取真实的example
+            Type type = this.getClass().getGenericInterfaces()[0];
+            Class superClass = null;
+            try {
+                superClass = Class.forName(type.getTypeName());
+            } catch (Exception ex) {
+
+            }
+            if (null == superClass) {
+                return null;
+            }
+            //获取dto类
+            Class dtoClass = getGenericTypeClass(superClass);
+            Class exampleClass = getExampleClassByDtoClass(dtoClass);
+
+            if (example.getClass() == exampleClass) {//无需转换
+                return example;
+            }
+            if (example instanceof String) {
+                String value = (String) example;
+                log.info("{}",value.startsWith("\"\\{"));
+
+//                if (value.startsWith("\\{") && value.endsWith("\\}")) {
+                    exampleObj = JsonUtils.json2Object(value, exampleClass);
+                    return (Serializable)exampleObj;
+//                }
+            }
+            exampleObj = JsonUtils.json2Object(JsonUtils.object2JsonString(example), exampleClass);
+        }
+        return (Serializable) exampleObj;
+    }
+    /**
      * 根据example查询总数量
      *
      * @param example
@@ -292,8 +339,9 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      */
     @Override
     public int getCount(Serializable example) {
+        Serializable exampleObj = serializableToExample(example);
         int count = 0;
-        List<DTO> list = getList(example);
+        List<DTO> list = getList(exampleObj);
         if (null != list) {
             count = list.size();
         }
@@ -313,9 +361,11 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
 
         if (null == pageNo || pageNo <= 0) pageNo = 1;
         if (null == pageSize || pageSize <= 0) pageSize = 10;
+        Serializable exampleObj = serializableToExample(example);
 
-        PageHelper.startPage(pageNo, pageSize);
-        List<T> list = baseMapper.selectByExample(example);
+        Page page = PageHelper.startPage(pageNo, pageSize);
+
+        List<T> list = baseMapper.selectByExample(exampleObj);
         PageInfo pageInfo = PageInfo.getPageInfo(list);
         List<DTO> resultList = new ArrayList<>();
         if (null != list) {
@@ -366,5 +416,43 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     @Override
     public List<DTO> getList(Serializable example, String dtoClassName) {
         return getList(example);
+    }
+
+
+    /**
+     * 获取泛型名称
+     *
+     * @param thisObjClass
+     */
+    private static Class getGenericTypeClass(Class thisObjClass) {
+
+        Class genericClass = null;
+        if (null != thisObjClass) {
+            genericClass = GenericsUtils.getSuperClassGenricType(thisObjClass);
+        }
+
+        if (null == genericClass || genericClass == Object.class) {
+            return null;
+        }
+
+        return genericClass;
+    }
+
+    /**
+     * 根据dto class获取example class
+     *
+     * @param dtoClass
+     * @return
+     */
+    private static Class getExampleClassByDtoClass(Class dtoClass) {
+        String className = dtoClass.getName();
+        className = className.replaceAll("dto\\.", "example\\.");
+        className = className.replaceAll("Dto$", "Example");
+        try {
+            Class exampleClass = Class.forName(className);
+            return exampleClass;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }

@@ -1,7 +1,10 @@
 package com.lianshang.generator.commons;
 
+import org.springframework.util.CollectionUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -18,6 +21,7 @@ public class PageInfo<T> implements Serializable {
 	private Long total;
 	private Integer pages;
 	private List dataList;
+	private String originClassName = LinkedHashMap.class.getName();
 	private Boolean hasMore = true;
 
 	public Integer getPageNo() {
@@ -46,12 +50,40 @@ public class PageInfo<T> implements Serializable {
 		this.pages = pages;
 	}
 
-	public List<T> getDataList(Class<T> tClass) {
-		List<T> list = new ArrayList<>();
+	/**
+	 * 解析成其他类型
+	 * @param tClass
+	 * @param <X>
+	 * @return
+	 */
+	public <X> List<X> getDataList(Class<X> tClass) {
+		List<X> list = new ArrayList<>();
 		if(null != dataList){
 			for(Object o : dataList){
 				String jsonValue = JsonUtils.object2JsonString(o);
-				T t = JsonUtils.json2Object(jsonValue, tClass);
+				X t = JsonUtils.json2Object(jsonValue, tClass);
+				list.add(t);
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * 获取原始类型,解决远程服务调用类型丢失的问题
+	 * @return
+	 */
+	public List<T> getDataList(){
+		List<T> list = new ArrayList<>();
+		if(null != dataList){
+			Class tClass =null;
+			try {
+				tClass = Class.forName(originClassName);
+			}catch (Exception ex){
+				tClass = LinkedHashMap.class;
+			}
+			for(Object o : dataList){
+				String jsonValue = JsonUtils.object2JsonString(o);
+				T t = (T) JsonUtils.json2Object(jsonValue, tClass);
 				list.add(t);
 			}
 		}
@@ -59,6 +91,9 @@ public class PageInfo<T> implements Serializable {
 	}
 	public void setDataList(List list) {
 		this.dataList = list;
+		if(!CollectionUtils.isEmpty(list)){
+			originClassName = list.get(0).getClass().getName();
+		}
 	}
 
 	public Boolean getHasMore() {

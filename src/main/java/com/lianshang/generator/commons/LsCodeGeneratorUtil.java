@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.lianshang.generator.commons.LianshangFreemarkerTemplateEngine;
 import lombok.extern.slf4j.Slf4j;
@@ -144,6 +145,7 @@ public class LsCodeGeneratorUtil {
         globalConfig.setServiceImplName("%sServiceImpl");
         globalConfig.setControllerName("%sController");
         globalConfig.setSwagger2(false);
+        globalConfig.setDateType(DateType.ONLY_DATE);
         return globalConfig;
     }
 

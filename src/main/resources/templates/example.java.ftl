@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.math.BigDecimal;
 /**
 * <p>

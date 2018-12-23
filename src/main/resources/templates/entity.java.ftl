@@ -1,7 +1,7 @@
 package ${package.Entity};
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.Data;
 /**
@@ -29,7 +29,7 @@ public class ${entity} implements Serializable {
     * ${field.comment}
      */
     </#if>
-    private ${field.propertyType} ${field.propertyName};
+    private  ${field.propertyType} ${field.propertyName};
 </#list>
 <#------------  END 字段循环遍历  ---------->
 

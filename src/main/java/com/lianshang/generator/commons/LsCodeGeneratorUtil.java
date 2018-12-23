@@ -22,17 +22,7 @@ import java.util.Map;
  */
 @Slf4j
 public class LsCodeGeneratorUtil {
-    private static String moduleName = "cloth2";
-    private static String packageParent = "com.lianshang";
-    private static String jdbcUrl = "jdbc:mysql://mysqldev.lsfash.cn:3307/lianshang?useUnicode=true&characterEncoding=utf8";
-    private static String driverClassName = "com.mysql.jdbc.Driver";
-    private static String userName = "lsdev";
-    private static String password = "hcblihiNRqiy58rp";
-    private static String tableName = "pc_cloth_order";
 
-//    public static void main(String[] args) {
-//        generateCode(moduleName, packageParent, jdbcUrl, driverClassName, userName, password, tableName);
-//    }
     /**
      * 代码生成器
      *

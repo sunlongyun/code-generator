@@ -3,22 +3,20 @@ package ${package.Entity};
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import com.baomidou.mybatisplus.annotation.*;
-import java.math.*;
 import lombok.Data;
 /**
- * <p>
- * ${table.comment!}
- * </p>
-*
- * @author ${author}
- * @date ${date}
- */
+* <p>
+* ${table.comment!}
+* </p>
+* @author ${author}
+* @date ${date}
+*/
 @Data
 <#if table.convert>
 @TableName("${table.name}")
 </#if>
 public class ${entity} implements Serializable {
+
     private static final long serialVersionUID = 1L;
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.fields as field>
@@ -27,41 +25,9 @@ public class ${entity} implements Serializable {
     </#if>
 
     <#if field.comment!?length gt 0>
-    <#if swagger2>
-    @ApiModelProperty(value = "${field.comment}")
-    <#else>
     /**
-     * ${field.comment}
+    * ${field.comment}
      */
-    </#if>
-    </#if>
-    <#if field.keyFlag>
-    <#-- 主键 -->
-        <#if field.keyIdentityFlag>
-    @TableId(value = "${field.name}", type = IdType.AUTO)
-        <#elseif idType??>
-    @TableId(value = "${field.name}", type = IdType.${idType})
-        <#elseif field.convert>
-    @TableId("${field.name}")
-        </#if>
-    <#-- 普通字段 -->
-    <#elseif field.fill??>
-    <#-- -----   存在字段填充设置   ----->
-        <#if field.convert>
-    @TableField(value = "${field.name}", fill = FieldFill.${field.fill})
-        <#else>
-    @TableField(fill = FieldFill.${field.fill})
-        </#if>
-    <#elseif field.convert>
-    @TableField("${field.name}")
-    </#if>
-<#-- 乐观锁注解 -->
-    <#if (versionFieldName!"") == field.name>
-    @Version
-    </#if>
-<#-- 逻辑删除注解 -->
-    <#if (logicDeleteFieldName!"") == field.name>
-    @TableLogic
     </#if>
     private ${field.propertyType} ${field.propertyName};
 </#list>
@@ -75,14 +41,14 @@ public class ${entity} implements Serializable {
             <#assign getprefix="get"/>
         </#if>
     public ${field.propertyType} ${getprefix}${field.capitalName}() {
-        return ${field.propertyName};
+    return ${field.propertyName};
     }
         <#if entityBuilderModel>
-    public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+        public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
         <#else>
-    public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+        public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
         </#if>
-        this.${field.propertyName} = ${field.propertyName};
+    this.${field.propertyName} = ${field.propertyName};
         <#if entityBuilderModel>
         return this;
         </#if>
@@ -95,9 +61,9 @@ public class ${entity} implements Serializable {
     </#list>
 </#if>
 <#if !entityLombokModel>
-    @Override
-    public String toString() {
-        return "${entity}{" +
+@Override
+public String toString() {
+return "${entity}{" +
     <#list table.fields as field>
         <#if field_index==0>
         "${field.propertyName}=" + ${field.propertyName} +
@@ -105,7 +71,7 @@ public class ${entity} implements Serializable {
         ", ${field.propertyName}=" + ${field.propertyName} +
         </#if>
     </#list>
-        "}";
-    }
+"}";
+}
 </#if>
 }

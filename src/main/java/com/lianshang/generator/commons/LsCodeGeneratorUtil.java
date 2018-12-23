@@ -98,7 +98,7 @@ public class LsCodeGeneratorUtil {
                     @Override
                     public String outputFile(TableInfo tableInfo) {
                         // 自定义输入文件名称
-                        return projectPath + "/src/main/resources/mapper/"
+                        return projectPath + "/src/main/resources/mapper/"+moduleName
                           + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
                     }
                 };

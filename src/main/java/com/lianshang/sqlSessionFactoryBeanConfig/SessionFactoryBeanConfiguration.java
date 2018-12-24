@@ -33,7 +33,6 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -356,9 +355,8 @@ public class SessionFactoryBeanConfiguration {
                 Iterator<String> it = dataSourceMap.keySet().iterator();
                 while (it.hasNext()) {
                     String dataSourceName = it.next();
-                    //d1,d2是为了屏蔽 mybatis-plus的自动配置特意添加的
-                    if (!dataSourceName.equals("d1") && !dataSourceName.equals("d2")) {
-                        DataSource firstDataSource = dataSourceMap.get(dataSourceName);
+                    DataSource firstDataSource = dataSourceMap.get(dataSourceName);
+                    if (null != firstDataSource) {
                         dynamicDataSource.setDefaultTargetDataSource(firstDataSource);
                         targetDataSources.put(DynamicDatasource.defaultKey, firstDataSource);
                         break;

@@ -1,5 +1,6 @@
 package com.lianshang.generator.commons;
 
+import com.lianshang.utils.JsonUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;

@@ -1,4 +1,4 @@
-package com.lianshang.generator.commons;
+package com.lianshang.utils;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;

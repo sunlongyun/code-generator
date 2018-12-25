@@ -96,7 +96,6 @@ public class SessionFactoryBeanConfiguration {
         this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
         this.applicationContext = applicationContext;
 
-
         logger.info("SessionFactoryBeanConfig初始化----------");
     }
 
@@ -131,7 +130,6 @@ public class SessionFactoryBeanConfiguration {
         if (StringUtils.hasLength(this.properties.getTypeAliasesPackage())) {
             factory.setTypeAliasesPackage(this.properties.getTypeAliasesPackage());
         }
-        // TODO 自定义枚举包
         if (StringUtils.hasLength(this.properties.getTypeEnumsPackage())) {
             factory.setTypeEnumsPackage(this.properties.getTypeEnumsPackage());
         }
@@ -252,14 +250,6 @@ public class SessionFactoryBeanConfiguration {
         }
     }
 
-    /**
-     * {@link org.mybatis.spring.annotation.MapperScan} ultimately ends up
-     * creating instances of {@link MapperFactoryBean}. If
-     * {@link org.mybatis.spring.annotation.MapperScan} is used then this
-     * auto-configuration is not needed. If it is _not_ used, however, then this
-     * will bring in a bean registrar and automatically register components based
-     * on the same component-scanning path as Spring Boot itself.
-     */
     @org.springframework.context.annotation.Configuration
     @Import({AutoConfiguredMapperScannerRegistrar.class})
     @ConditionalOnMissingBean(MapperFactoryBean.class)

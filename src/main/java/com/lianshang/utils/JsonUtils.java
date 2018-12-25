@@ -1,4 +1,4 @@
-package com.lianshang.generator.commons;
+package com.lianshang.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

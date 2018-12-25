@@ -1,4 +1,4 @@
-package com.lianshang.generator.commons;
+package com.lianshang.utils;
 
 import lombok.extern.slf4j.Slf4j;
 

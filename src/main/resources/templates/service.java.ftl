@@ -2,6 +2,7 @@ package ${package.Service};
 
 import com.lianshang.generator.commons.IService;
 import ${cfg.dtoPath}.*;
+import ${cfg.dtoPath}.${entity}Dto;
 /**
  * <p>
  * ${table.comment!} 服务类

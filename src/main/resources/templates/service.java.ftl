@@ -10,6 +10,6 @@ import ${cfg.dtoPath}.${entity}Dto;
  * @author ${author}
  * @since ${date}
  */
-public interface ${table.serviceName} extends ${superServiceClass}<${entity}Dto> {
+public interface I${table.serviceName} extends ${superServiceClass}<${entity}Dto> {
 
 }

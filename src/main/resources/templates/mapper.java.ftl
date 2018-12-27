@@ -1,7 +1,7 @@
 package ${package.Mapper};
 
 import ${package.Entity}.${entity};
-import ${superMapperClassPackage};
+import com.lianshang.generator.commons.LsBaseMapper;
 /**
  * <p>
  * ${table.comment!} Mapper 接口

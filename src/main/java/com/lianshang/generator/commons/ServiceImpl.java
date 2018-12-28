@@ -27,6 +27,7 @@ import java.util.List;
  */
 @Slf4j
 public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<DTO> {
+    public static final int BATCH_UPDATE_MAX = 2000;//批量更新上线
     @Autowired
     protected M baseMapper;
 
@@ -132,6 +133,24 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     }
 
     /**
+     * 获取dto的ID
+     *
+     * @param dto
+     * @return
+     */
+    private Object getIdByDto(DTO dto) {
+        try {
+            Field dtoId = dto.getClass().getDeclaredField("id");
+            dtoId.setAccessible(true);
+            Object idValue = dtoId.get(dto);
+            dtoId.setAccessible(false);
+            return idValue;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    /**
      * 根据id修改对象
      *
      * @param n
@@ -153,29 +172,45 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * @return
      */
     public Boolean batchUpdate(DTO n, Serializable example) {
-        try {
-            if(null == example){
-                throw new RuntimeException("批量更新条件不能为空");
-            }
-            List<DTO> dtoList = getList(example);
-            if(null != dtoList){
-                for(DTO dto : dtoList){
-                    Field filedId = n.getClass().getDeclaredField("id");
-                    filedId.setAccessible(true);
-                    Object id = filedId.get(dto);
-                    filedId.set(n, id);
 
-                    filedId.setAccessible(false);
+        T entity = dtoToEntity(n);
 
-                    update(n);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        List<DTO> dtoList = getList(example);
+        if (CollectionUtils.isEmpty(dtoList)) {
+            throw new RuntimeException("批量更新的数据不能为空!");
         }
 
+        int len = dtoList.size();
+        if(len >= BATCH_UPDATE_MAX){
+            throw new RuntimeException("批量更新的数据数量太大,锁表时间太长会影响其他事务的执行,请进行数据分片!");
+        }
+
+        StringBuilder whereSql = new StringBuilder(" where id in (");
+        int i = 0;
+        for (DTO dto : dtoList) {
+            Object idValue = getIdByDto(dto);
+            if (null != idValue) {
+                i++;
+                whereSql.append(idValue);
+                if (i < len) {
+                    whereSql.append(",");
+                }
+            }
+        }
+        whereSql.append(")");
+
+        int r = baseMapper.update(entity, new Wrapper<T>() {
+            @Override
+            public T getEntity() {
+                return null;
+            }
+
+            @Override
+            public String getSqlSegment() {
+                return whereSql.toString();
+            }
+        });
+        return r > 0;
     }
     /**
      * 根据id删除对象(逻辑删除)

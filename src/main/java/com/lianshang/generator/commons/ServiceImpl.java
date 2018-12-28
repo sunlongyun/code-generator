@@ -173,6 +173,9 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      */
     public Boolean batchUpdate(DTO n, Serializable example) {
 
+        if(null == example){
+            throw new RuntimeException("更新条件不能为空!");
+        }
         T entity = dtoToEntity(n);
 
         List<DTO> dtoList = getList(example);
@@ -185,7 +188,7 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
             throw new RuntimeException("批量更新的数据数量太大,锁表时间太长会影响其他事务的执行,请进行数据分片!");
         }
 
-        StringBuilder whereSql = new StringBuilder(" where id in (");
+        StringBuilder whereSql = new StringBuilder("  id in (");
         int i = 0;
         for (DTO dto : dtoList) {
             Object idValue = getIdByDto(dto);

@@ -37,6 +37,11 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * @return
      */
     public DTO entityToDto(T entity) {
+
+        if (null == entity) {
+            return null;
+        }
+
         try {
             String xClassName = entity.getClass().getName();
             String yClassName = xClassName.replaceAll("entity\\.","dto\\.")+"Dto";
@@ -56,6 +61,11 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      * @return
      */
     public T dtoToEntity(Object dto) {
+
+        if (null == dto) {
+            return null;
+        }
+
         try {
             String xClassName = dto.getClass().getName();
             String yClassName = xClassName
@@ -107,21 +117,27 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     /**
      * 添加对象
      *
-     * @param n
+     * @param dto
      * @return
      */
     @Override
-    public Boolean save(DTO n) {
-        T target = dtoToEntity(n);
+    public Boolean save(DTO dto) {
+
+        if (null == dto) {
+            return false;
+        }
+
+        T target = dtoToEntity(dto);
         int r = baseMapper.insert(target);
+
         try {
             //id 拷贝
             Field entityId = target.getClass().getDeclaredField("id");
-            Field dtoId = n.getClass().getDeclaredField("id");
+            Field dtoId = dto.getClass().getDeclaredField("id");
             entityId.setAccessible(true);
             dtoId.setAccessible(true);
             Object id = entityId.get(target);//value
-            dtoId.set(n, id);
+            dtoId.set(dto, id);
 
             entityId.setAccessible(false);
             dtoId.setAccessible(false);

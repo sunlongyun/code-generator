@@ -1,5 +1,6 @@
 package com.lianshang.utils;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
@@ -146,6 +147,8 @@ public class LsCodeGeneratorUtil {
         globalConfig.setControllerName("%sController");
         globalConfig.setSwagger2(false);
         globalConfig.setDateType(DateType.ONLY_DATE);
+        globalConfig.setIdType(IdType.AUTO);
+
         return globalConfig;
     }
 

@@ -3,7 +3,7 @@ package ${package.Entity};
 import java.io.Serializable;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
-
+import com.baomidou.mybatisplus.annotation.IdType;
 import lombok.Data;
 /**
 * <p>
@@ -30,7 +30,9 @@ public class ${entity} implements Serializable {
     * ${field.comment}
      */
     </#if>
+    <#if field.propertyName=="id">
     @TableId(value = "id", type = IdType.AUTO)
+    </#if>
     private  ${field.propertyType} ${field.propertyName};
 </#list>
 <#------------  END 字段循环遍历  ---------->

@@ -15,6 +15,8 @@ import freemarker.template.Template;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +27,10 @@ import java.util.Map;
  * @date 2018-11-15 下午2:14
  */
 public class LianshangFreemarkerTemplateEngine extends AbstractTemplateEngine {
+
     private Configuration configuration;
+
+    private List<GenerateFileTypeEnum> coverableFileTypeList = new ArrayList<>();
 
     @Override
     public LianshangFreemarkerTemplateEngine init(ConfigBuilder configBuilder) {
@@ -36,6 +41,10 @@ public class LianshangFreemarkerTemplateEngine extends AbstractTemplateEngine {
         return this;
     }
 
+    public LianshangFreemarkerTemplateEngine (List<GenerateFileTypeEnum> coverableFileTypeList) {
+        super();
+        this.coverableFileTypeList = coverableFileTypeList;
+    }
 
     @Override
     public void writer(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception {
@@ -83,8 +92,9 @@ public class LianshangFreemarkerTemplateEngine extends AbstractTemplateEngine {
                 // Mp.java
                 String entityName = tableInfo.getEntityName();
                 if (null != entityName && null != pathInfo.get(ConstVal.ENTITY_PATH)) {
+
                     String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + File.separator + "%s" + suffixJavaOrKt()), entityName);
-                    if (isCreate(FileType.ENTITY, entityFile)) {
+                    if (isNeedCoverThisTypeFile(FileType.ENTITY, entityFile, GenerateFileTypeEnum.ENTITY)) {
                         writer(objectMap, templateFilePath(template.getEntity(getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
                     }
 
@@ -92,7 +102,7 @@ public class LianshangFreemarkerTemplateEngine extends AbstractTemplateEngine {
 
                     String dtoPath = entityPath.replaceAll("entity$", "dto");
                     String dtoFile = String.format(dtoPath + File.separator + "%s" + suffixJavaOrKt(), entityName+"Dto");
-                    if (isCreate(FileType.OTHER, dtoFile)) {
+                    if (isNeedCoverThisTypeFile(FileType.OTHER, dtoFile, GenerateFileTypeEnum.DTO)) {
                         String entityTemplateFilePath = templateFilePath(template.getEntity(getConfigBuilder().getGlobalConfig().isKotlin()));
                         String dtoTemplateFilePath = entityTemplateFilePath.replaceAll("entity\\.", "dto.");
                         writer(objectMap, dtoTemplateFilePath, dtoFile);
@@ -101,7 +111,7 @@ public class LianshangFreemarkerTemplateEngine extends AbstractTemplateEngine {
 
                     String examplePath = entityPath.replaceAll("entity$", "example");
                     String exampleFile = String.format(examplePath + File.separator + "%s" + suffixJavaOrKt(), entityName+"Example");
-                    if (isCreate(FileType.OTHER, exampleFile)) {
+                    if (isNeedCoverThisTypeFile(FileType.OTHER, exampleFile, GenerateFileTypeEnum.EXAMPLE)) {
                         String entityTemplateFilePath = templateFilePath(template.getEntity(getConfigBuilder().getGlobalConfig().isKotlin()));
                         String exampleTemplateFilePath = entityTemplateFilePath.replaceAll("entity\\.", "example.");
 
@@ -111,35 +121,35 @@ public class LianshangFreemarkerTemplateEngine extends AbstractTemplateEngine {
                 // MpMapper.java
                 if (null != tableInfo.getMapperName() && null != pathInfo.get(ConstVal.MAPPER_PATH)) {
                     String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(FileType.MAPPER, mapperFile)) {
+                    if (isNeedCoverThisTypeFile(FileType.MAPPER, mapperFile, GenerateFileTypeEnum.MAPPER_INTERFACE)) {
                         writer(objectMap, templateFilePath(template.getMapper()), mapperFile);
                     }
                 }
                 // MpMapper.xml
                 if (null != tableInfo.getXmlName() && null != pathInfo.get(ConstVal.XML_PATH)) {
                     String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
-                    if (isCreate(FileType.XML, xmlFile)) {
+                    if (isNeedCoverThisTypeFile(FileType.XML, xmlFile, GenerateFileTypeEnum.MAPPER_XML)) {
                         writer(objectMap, templateFilePath(template.getXml()), xmlFile);
                     }
                 }
                 // IMpService.java
                 if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERVICE_PATH)) {
                     String serviceFile = String.format((pathInfo.get(ConstVal.SERVICE_PATH) + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(FileType.SERVICE, serviceFile)) {
+                    if (isNeedCoverThisTypeFile(FileType.SERVICE, serviceFile, GenerateFileTypeEnum.SERVICE)) {
                         writer(objectMap, templateFilePath(template.getService()), serviceFile);
                     }
                 }
                 // MpServiceImpl.java
                 if (null != tableInfo.getServiceImplName() && null != pathInfo.get(ConstVal.SERVICE_IMPL_PATH)) {
                     String implFile = String.format((pathInfo.get(ConstVal.SERVICE_IMPL_PATH) + File.separator + tableInfo.getServiceImplName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(FileType.SERVICE_IMPL, implFile)) {
+                    if (isNeedCoverThisTypeFile(FileType.SERVICE_IMPL, implFile, GenerateFileTypeEnum.SERVICE_IMPL)) {
                         writer(objectMap, templateFilePath(template.getServiceImpl()), implFile);
                     }
                 }
                 // MpController.java
                 if (null != tableInfo.getControllerName() && null != pathInfo.get(ConstVal.CONTROLLER_PATH)) {
                     String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(FileType.CONTROLLER, controllerFile)) {
+                    if (isNeedCoverThisTypeFile(FileType.CONTROLLER, controllerFile, GenerateFileTypeEnum.CONTROLLER)) {
                         writer(objectMap, templateFilePath(template.getController()), controllerFile);
                     }
                 }
@@ -148,5 +158,13 @@ public class LianshangFreemarkerTemplateEngine extends AbstractTemplateEngine {
             logger.error("无法创建文件，请检查配置信息！", e);
         }
         return this;
+    }
+
+    private boolean isNeedCoverThisTypeFile(FileType fileType, String file, GenerateFileTypeEnum fileTypeEnum){
+        boolean isCreate = isCreate(fileType, file);
+        if(!isCreate){
+            return coverableFileTypeList.contains(fileTypeEnum);
+        }
+        return isCreate;
     }
 }

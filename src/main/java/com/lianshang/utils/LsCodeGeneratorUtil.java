@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.lianshang.generator.commons.GenerateFileTypeEnum;
 import com.lianshang.generator.commons.LianshangFreemarkerTemplateEngine;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
@@ -35,7 +37,15 @@ public class LsCodeGeneratorUtil {
      * @param tableName
      */
     public static void generateCode(String moduleName, String packageParent, String jdbcUrl, String driverClassName,
-                                    String userName, String password, String... tableName) {
+                                    String userName, String password, String... tableName){
+
+        generateCode(moduleName, packageParent, jdbcUrl, driverClassName, userName, password,
+            new ArrayList<>(), tableName);
+    }
+
+    public static void generateCode(String moduleName, String packageParent, String jdbcUrl, String driverClassName,
+                                    String userName, String password,
+                                    List<GenerateFileTypeEnum> coverableFileTypeList, String... tableName) {
         // 代码生成器
         AutoGenerator generator = new AutoGenerator();
 
@@ -62,7 +72,7 @@ public class LsCodeGeneratorUtil {
         // 策略配置
         StrategyConfig strategy = getStategy(tableName);
         generator.setStrategy(strategy);
-        generator.setTemplateEngine(new LianshangFreemarkerTemplateEngine());
+        generator.setTemplateEngine(new LianshangFreemarkerTemplateEngine(coverableFileTypeList));
 
         generator.execute();
     }

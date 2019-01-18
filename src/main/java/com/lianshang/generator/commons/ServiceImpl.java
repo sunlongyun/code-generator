@@ -9,7 +9,6 @@ import com.lianshang.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -62,16 +61,24 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
      */
     public T dtoToEntity(Object dto) {
 
+        Object dtoTarget = null;
+
         if (null == dto) {
             return null;
         }
+        Class dtoClazz = getDtoClass(this.getClass());
+        if (dto instanceof String) {
+            dtoTarget = JsonUtils.json2Object((String) dto, dtoClazz);
+        } else {
+            dtoTarget = dto;
+        }
 
         try {
-            String xClassName = dto.getClass().getName();
-            String yClassName = xClassName
+            String dtoClassName = dtoTarget.getClass().getName();
+            String entityClassName = dtoClassName
               .replaceAll("dto\\.", "entity\\.").replaceAll("Dto$", "");
-            Object target = Class.forName(yClassName).newInstance();
-            BeanUtils.copyProperties(dto, target);
+            Object target = Class.forName(entityClassName).newInstance();
+            BeanUtils.copyProperties(dtoTarget, target);
             return (T) target;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -127,17 +134,33 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
             return false;
         }
 
-        T target = dtoToEntity(dto);
+        T target = null;
+        Class dtoClazz = null;
+        Object dtoObj = null;
+
+
+        if (dto instanceof String) {
+            String dtoJson = (String) dto;
+            dtoClazz = getDtoClass(this.getClass());
+            dtoObj = JsonUtils.json2Object(dtoJson, dtoClazz);
+        } else {
+            dtoClazz = dto.getClass();
+            dtoObj = dto;
+        }
+
+        target = dtoToEntity(dtoObj);
+
         int r = baseMapper.insert(target);
 
         try {
             //id 拷贝
             Field entityId = target.getClass().getDeclaredField("id");
-            Field dtoId = dto.getClass().getDeclaredField("id");
+            Field dtoId = dtoClazz.getDeclaredField("id");
+
             entityId.setAccessible(true);
             dtoId.setAccessible(true);
             Object id = entityId.get(target);//value
-            dtoId.set(dto, id);
+            dtoId.set(dtoObj, id);
 
             entityId.setAccessible(false);
             dtoId.setAccessible(false);
@@ -169,30 +192,37 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
     /**
      * 根据id修改对象
      *
-     * @param n
+     * @param dto
      * @return
      */
     @Override
-    @Transactional
-    public Boolean update(DTO n) {
-        T target = dtoToEntity(n);
+    public Boolean update(DTO dto) {
+
+        if (null == dto) {
+            return false;
+        }
+
+        T target = dtoToEntity(dto);
+
         int r = baseMapper.updateById(target);
         return r > 0;
     }
 
+
     /**
      * 批量更新
      *
-     * @param n
+     * @param dto
      * @param example
      * @return
      */
-    public Boolean batchUpdate(DTO n, Serializable example) {
+    public Boolean batchUpdate(DTO dto, Serializable example) {
 
         if(null == example){
             throw new RuntimeException("更新条件不能为空!");
         }
-        T entity = dtoToEntity(n);
+
+        T entity = dtoToEntity(dto);
 
         List<DTO> dtoList = getList(example);
         if (CollectionUtils.isEmpty(dtoList)) {
@@ -206,8 +236,8 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
 
         StringBuilder whereSql = new StringBuilder("  id in (");
         int i = 0;
-        for (DTO dto : dtoList) {
-            Object idValue = getIdByDto(dto);
+        for (DTO dto1 : dtoList) {
+            Object idValue = getIdByDto(dto1);
             if (null != idValue) {
                 i++;
                 whereSql.append(idValue);
@@ -347,6 +377,28 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
         return resultList;
     }
 
+    /**
+     * 获取dto类型
+     *
+     * @param thisClass
+     * @return
+     */
+    private Class getDtoClass(Class thisClass) {
+
+        Type type = thisClass.getGenericInterfaces()[0];
+        Class superClass = null;
+        try {
+            superClass = Class.forName(type.getTypeName());
+        } catch (Exception ex) {
+
+        }
+        if (null == superClass) {
+            return null;
+        }
+        //获取dto类
+        Class dtoClass = getGenericTypeClass(superClass);
+        return dtoClass;
+    }
     /**
      * serializable 转真实example对象
      *

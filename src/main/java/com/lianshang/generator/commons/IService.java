@@ -4,28 +4,28 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-public interface IService<N> {
+public interface IService<DTO> {
     /**
      * 添加对象
-     * @param n
+     * @param dto
      * @return
      */
-    public Boolean save(N n);
+    public Boolean save(DTO dto);
 
     /**
      * 根据id修改对象
-     * @param n
+     * @param dto
      * @return
      */
-    public Boolean update(N n);
+    public Boolean update(DTO dto);
 
     /**
      * 批量更新
-     * @param n
+     * @param dto
      * @param example
      * @return
      */
-    public Boolean batchUpdate(N n, Serializable example);
+    public Boolean batchUpdate(DTO dto, Serializable example);
     /**
      * 根据id删除对象(逻辑删除)
      * @param id
@@ -38,7 +38,7 @@ public interface IService<N> {
      * @param id
      * @return
      */
-    public N getById(Serializable id);
+    public DTO getById(Serializable id);
 
     /**
      * 0.0.2版本该方法已废除,不建议继续使用
@@ -47,13 +47,13 @@ public interface IService<N> {
      * @return
      */
     @Deprecated
-    public N getById(Serializable id, String dtoClassName);
+    public DTO getById(Serializable id, String dtoClassName);
     /**
      * 根据id列表查询对象列表
      * @param idList
      * @return
      */
-    public List<N> getListByIds(Collection<? extends Serializable> idList);
+    public List<DTO> getListByIds(Collection<? extends Serializable> idList);
 
     /**
      * 0.0.2版本该方法已废除,不建议继续使用
@@ -62,14 +62,14 @@ public interface IService<N> {
      * @return
      */
     @Deprecated
-    public List<N> getListByIds(Collection<? extends Serializable> idList, String dtoClassName);
+    public List<DTO> getListByIds(Collection<? extends Serializable> idList, String dtoClassName);
 
     /**
      * 根据example查询
      * @param example
      * @return
      */
-    public List<N> getList(Serializable example);
+    public List<DTO> getList(Serializable example);
 
     /**
      * 0.0.2版本该方法已废除,不建议继续使用
@@ -78,7 +78,7 @@ public interface IService<N> {
      * @return
      */
     @Deprecated
-    public List<N> getList(Serializable example, String dtoClassName);
+    public List<DTO> getList(Serializable example, String dtoClassName);
 
     /**
      * 根据example查询总数量

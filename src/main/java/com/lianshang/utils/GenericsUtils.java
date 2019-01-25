@@ -38,6 +38,8 @@ public class GenericsUtils {
         if (null == genType || genType.getTypeName() == Object.class.getName()) {
             genType = clazz.getGenericInterfaces()[0];
         }
+        if(null == genType) return clazz;
+
         if (!(genType instanceof ParameterizedType)) {
             return Object.class;
         }

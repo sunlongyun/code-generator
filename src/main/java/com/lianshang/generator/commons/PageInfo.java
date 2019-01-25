@@ -84,8 +84,7 @@ public class PageInfo<T> implements Serializable {
 		if(originClassName.equals(LinkedHashMap.class.getName())){
 			notChange = true;
 		}
-		if(null == dataList
-			|| originClassName.equals(dataList.get(0).getClass().getName()) ){
+		if(null == dataList || originClassName.equals(dataList.get(0).getClass().getName())) {
 			notChange = true;
 		}
 

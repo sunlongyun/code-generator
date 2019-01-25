@@ -77,20 +77,19 @@ public class PageInfo<T> implements Serializable {
 	 * @return
 	 */
 	private boolean notNeedChangeType() {
-		boolean needChange = true;
+
+		boolean notChange = false;
 
 		//判断是否需要转换
 		if(originClassName.equals(LinkedHashMap.class.getName())){
-			needChange = false;
+			notChange = true;
 		}
 		if(null == dataList
 			|| originClassName.equals(dataList.get(0).getClass().getName()) ){
-			needChange = false;
+			notChange = true;
 		}
-		if(!needChange){
-			return true;
-		}
-		return false;
+
+		return notChange;
 	}
 
 	/**
@@ -99,7 +98,7 @@ public class PageInfo<T> implements Serializable {
 	 */
 	public List<T> getDataList(){
 
-		if(!notNeedChangeType()){
+		if(notNeedChangeType()){
 			return dataList;
 		}
 

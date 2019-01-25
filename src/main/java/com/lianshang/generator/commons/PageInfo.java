@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import org.springframework.util.StringUtils;
 
 /**
  * 分页
@@ -62,6 +63,13 @@ public class PageInfo<T> implements Serializable {
 	 * @return
 	 */
 	public <X> List<X> getDataList(Class<X> tClass) {
+
+		//有具体类型的直接返回
+		if(!StringUtils.isEmpty(originClassName)  &&
+			!originClassName.equals(LinkedHashMap.class.getName())){
+			return dataList;
+		}
+
 		List<X> list = new ArrayList<>();
 		if(null != dataList){
 			for(Object o : dataList){

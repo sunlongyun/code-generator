@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -84,7 +85,7 @@ public class PageInfo<T> implements Serializable {
 		if(originClassName.equals(LinkedHashMap.class.getName())){
 			notChange = true;
 		}
-		if(null == dataList || originClassName.equals(dataList.get(0).getClass().getName())) {
+		if(null == dataList || !(dataList.get(0) instanceof Map)) {
 			notChange = true;
 		}
 

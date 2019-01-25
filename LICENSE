@@ -187,7 +187,8 @@ public class PackageDataSourceCfgImpl implements PkgDtsCfg {
 
 }
 
-
+最新版本 0.0.3
+#1.修复了 PageInfo 的方法getDataList每次都要转换类型的bug.当前就是目标类型,不转换.
 
 
 

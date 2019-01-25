@@ -1,13 +1,11 @@
 package com.lianshang.generator.commons;
 
 import com.lianshang.utils.JsonUtils;
-import org.springframework.util.CollectionUtils;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import org.springframework.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 分页
@@ -64,21 +62,35 @@ public class PageInfo<T> implements Serializable {
 	 */
 	public <X> List<X> getDataList(Class<X> tClass) {
 
-		//有具体类型的直接返回
-		if(!StringUtils.isEmpty(originClassName)  &&
-			!originClassName.equals(LinkedHashMap.class.getName())){
-			return dataList;
+		List<X> list = new ArrayList<>();
+		for(Object o : dataList){
+			String jsonValue = JsonUtils.object2JsonString(o);
+			X t = JsonUtils.json2Object(jsonValue, tClass);
+			list.add(t);
 		}
 
-		List<X> list = new ArrayList<>();
-		if(null != dataList){
-			for(Object o : dataList){
-				String jsonValue = JsonUtils.object2JsonString(o);
-				X t = JsonUtils.json2Object(jsonValue, tClass);
-				list.add(t);
-			}
-		}
 		return list;
+	}
+
+	/**
+	 * 不需要类型转换的,直接返回
+	 * @return
+	 */
+	private boolean notNeedChangeType() {
+		boolean needChange = true;
+
+		//判断是否需要转换
+		if(originClassName.equals(LinkedHashMap.class.getName())){
+			needChange = false;
+		}
+		if(null == dataList
+			|| originClassName.equals(dataList.get(0).getClass().getName()) ){
+			needChange = false;
+		}
+		if(!needChange){
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -86,20 +98,25 @@ public class PageInfo<T> implements Serializable {
 	 * @return
 	 */
 	public List<T> getDataList(){
-		List<T> list = new ArrayList<>();
-		if(null != dataList){
-			Class tClass =null;
-			try {
-				tClass = Class.forName(originClassName);
-			}catch (Exception ex){
-				tClass = LinkedHashMap.class;
-			}
-			for(Object o : dataList){
-				String jsonValue = JsonUtils.object2JsonString(o);
-				T t = (T) JsonUtils.json2Object(jsonValue, tClass);
-				list.add(t);
-			}
+
+		if(!notNeedChangeType()){
+			return dataList;
 		}
+
+		Class tClass =null;
+		try {
+			tClass = Class.forName(originClassName);
+		}catch (Exception ex){
+			tClass = LinkedHashMap.class;
+		}
+
+		List<T> list = new ArrayList<>();
+		for(Object o : dataList){
+			String jsonValue = JsonUtils.object2JsonString(o);
+			T t = (T) JsonUtils.json2Object(jsonValue, tClass);
+			list.add(t);
+		}
+
 		return list;
 	}
 	public void setDataList(List list) {

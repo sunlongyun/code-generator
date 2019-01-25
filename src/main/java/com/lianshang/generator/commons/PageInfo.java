@@ -140,6 +140,7 @@ public class PageInfo<T> implements Serializable {
 	 * @return
 	 */
 	public  static <M> PageInfo getPageInfo(List<M> list){
+
 		com.github.pagehelper.PageInfo<M> pageInfo = new com.github.pagehelper.PageInfo<>(list);
 		
 		PageInfo pInfo = new PageInfo();
@@ -147,9 +148,10 @@ public class PageInfo<T> implements Serializable {
 		pInfo.setPageSize(pageInfo.getPageSize());
 		pInfo.setPages(pageInfo.getPages());
 		pInfo.setTotal(pageInfo.getTotal());
-		List<M> ll = new ArrayList<>();
-		ll.addAll(pageInfo.getList());
-		pInfo.setDataList(ll);
+
+		List<M> mArrayList = new ArrayList<>();
+		mArrayList.addAll(pageInfo.getList());
+		pInfo.setDataList(mArrayList);
 		pInfo.setHasMore(pageInfo.getPageNum() * pageInfo.getPageSize() < pageInfo.getTotal());
 		return pInfo;
 	}

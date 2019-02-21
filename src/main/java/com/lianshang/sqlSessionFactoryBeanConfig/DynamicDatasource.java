@@ -3,11 +3,9 @@ package com.lianshang.sqlSessionFactoryBeanConfig;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 动态数据源
@@ -69,6 +67,22 @@ public class DynamicDatasource extends AbstractRoutingDataSource{
 		}
 		log.info("dataSource key :{}", maxLongKey);
 		dataSourceKey.set(maxLongKey);
+	}
+
+	/**
+	 * 修改数据源标志(取匹配精度最高的key)
+	 *
+	 * @param fullPackageName 全包路径
+	 */
+	public static void setDataSourceKey(String fullPackageName, String fullClazzName) {
+
+		if(null == keys || keys.isEmpty()) {
+			throw new RuntimeException("数据源集合为空");
+		}
+		if(keys.contains(fullClazzName)) {
+			dataSourceKey.set(fullClazzName);
+		}
+		setDataSourceKey(fullPackageName);
 	}
 	
 }

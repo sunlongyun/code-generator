@@ -36,7 +36,6 @@ public class DynamicDatasource extends AbstractRoutingDataSource{
 	@Override
 	protected Object determineCurrentLookupKey() {
 		String key = dataSourceKey.get();
-		log.info("key==>{}", key);
 		return key;
 	}
 	
@@ -65,7 +64,6 @@ public class DynamicDatasource extends AbstractRoutingDataSource{
 			log.info("未找到匹配的数据源，尝试使用默认数据源");
 			maxLongKey = defaultKey;
 		}
-		log.info("dataSource key :{}", maxLongKey);
 		dataSourceKey.set(maxLongKey);
 	}
 

@@ -62,8 +62,8 @@ import java.util.*;
 @Configuration
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 @EnableConfigurationProperties(MybatisPlusProperties.class)
-@AutoConfigureAfter({DataSourceAutoConfiguration.class})
-@AutoConfigureBefore({MybatisPlusAutoConfiguration.class,MybatisSqlSessionFactoryBean.class})
+//@AutoConfigureBefore({DataSourceAutoConfiguration.class})
+@AutoConfigureBefore({MybatisPlusAutoConfiguration.class,MybatisSqlSessionFactoryBean.class,DataSourceAutoConfiguration.class})
 @ConditionalOnMissingBean({DynamicDatasource.class,SqlSessionFactory.class})
 @ConditionalOnProperty("mybatis-plus.mapper-locations")
 public class SessionFactoryBeanConfiguration {
@@ -305,6 +305,7 @@ public class SessionFactoryBeanConfiguration {
 
     @Bean("dynamicDatasource")
     @ConditionalOnMissingBean
+    @Primary
     public  DynamicDatasource getDynamicDatasource(ApplicationContext applicationContext, ObjectProvider<List<PkgDtsCfg>> provider){
         //动态数据源
         DynamicDatasource dynamicDataSource = new DynamicDatasource();

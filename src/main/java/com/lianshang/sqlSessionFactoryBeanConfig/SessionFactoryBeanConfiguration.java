@@ -37,6 +37,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -62,8 +63,8 @@ import java.util.*;
 @Configuration
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 @EnableConfigurationProperties(MybatisPlusProperties.class)
-@AutoConfigureAfter({DataSourceAutoConfiguration.class})
-@AutoConfigureBefore({MybatisPlusAutoConfiguration.class,MybatisSqlSessionFactoryBean.class})
+@AutoConfigureBefore({MybatisPlusAutoConfiguration.class,MybatisSqlSessionFactoryBean.class,
+    JdbcTemplateAutoConfiguration.class,DataSourceAutoConfiguration.class})
 @ConditionalOnMissingBean({DynamicDatasource.class,SqlSessionFactory.class})
 @ConditionalOnProperty("mybatis-plus.mapper-locations")
 public class SessionFactoryBeanConfiguration {

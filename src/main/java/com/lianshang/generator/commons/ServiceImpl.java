@@ -300,7 +300,12 @@ public class ServiceImpl<M extends LsBaseMapper<T>, T, DTO> implements IService<
                     T conditionT = (T) t.getClass().newInstance();
                     Field filedId = t.getClass().getDeclaredField("id");
                     filedId.setAccessible(true);
-                    filedId.set(conditionT, Integer.valueOf(id+""));
+                    if(filedId.getType() == Integer.class){
+                        filedId.set(conditionT, Integer.valueOf(id+""));
+                    }else{
+                        filedId.set(conditionT, Long.valueOf(id+""));
+                    }
+
                     filedId.setAccessible(false);
 
                     return conditionT;
